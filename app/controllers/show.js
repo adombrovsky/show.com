@@ -61,19 +61,23 @@ exports.view = function (req, res)
                                 var show = new Show();
                                 show.setAttributes(body);
                                 show.validate(function(){show.save();});
+                                localResult.show = show;
+                                callback();
                             }
                         );
                     }
-                    localResult.show = show;
-                    callback();
+                    else
+                    {
+                        localResult.show = show;
+                        callback();
+                    }
                 });
             },
             function(callback){
-                localResult.isGuest = !req.user;
+                localResult.isGuest = res.locals.isGuest;
                 UserShow.findOne({user_id:req.user? req.user._id:0,show_id:id},function(err, record){
                     if (err) return callback(err);
-                    var watchedByUser = record ? true: false;
-                    localResult.watchedByUser = watchedByUser;
+                    localResult.watchedByUser = record ? true: false;
                     callback();
                 });
             },
@@ -145,7 +149,7 @@ exports.episodes = function (req, res)
 {
     var id=req.params.id;
     var season=req.params.season;
-
+    var userId = req.user ? req.user._id : -1;
     var local = {};
     async.parallel(
         [
@@ -182,7 +186,7 @@ exports.episodes = function (req, res)
             },
             function (callback)
             {
-                UserEpisode.find({user_id:req.user._id,show_id:id,season:season},function(err, data){
+                UserEpisode.find({user_id:userId,show_id:id,season:season},function(err, data){
                     local.ids = {};
                     for (var i=0; i<data.length;i++)
                     {
@@ -193,7 +197,7 @@ exports.episodes = function (req, res)
             }
         ],
         function(err){
-            res.render('show/_episodes',{episodes:local.episode,item_id:id, season:season, ids:local.ids},function(err, html){
+            res.render('show/_episodes',{episodes:local.episode,item_id:id, season:season, ids:local.ids,isGuest :res.locals.isGuest},function(err, html){
                 var returnObject = {
                     season:html,
                     err:err
@@ -226,6 +230,11 @@ exports.addEpisode = function (req, res)
 
 exports.list = function (req, res)
 {
+    if (req.isUnauthenticated() || typeof req.user == 'undefined')
+    {
+        res.redirect('/');
+    }
+
     var localResult = {ids:[],shows:[]};
     async.series(
         [

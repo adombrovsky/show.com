@@ -16,7 +16,8 @@
         "passport-local": ">= 0.0.0",
         "passport-google": ">= 0.0.0",
         "passport-google-oauth": ">= 0.0.0",
-        "request": "2.22.0"
+        "request": "2.22.0",
+        "underscore": "1.5.2"
     },
     "devDependencies": {
         "mocha": "1.7.0",

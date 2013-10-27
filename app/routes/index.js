@@ -2,10 +2,19 @@ var main = require(__dirname + '/../controllers/main');
 var show = require(__dirname + '/../controllers/show');
 var user = require(__dirname + '/../controllers/user');
 var passport = require('passport');
+var _ = require('underscore');
 
 function checkUserAuthentication (req, res, next) {
     res.locals.isGuest = req.isUnauthenticated();
-    next();
+    var onlyLoggedUsers = ['/user/','/user/save/', '/show/list/'];
+    if (req.isUnauthenticated() && _.include(onlyLoggedUsers, req.path) )
+    {
+        res.redirect('/error/');
+    }
+    else
+    {
+        next();
+    }
 }
 
 module.exports = function (app)

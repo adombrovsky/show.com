@@ -5,6 +5,7 @@ exports.index = function (req, res)
     if (req.isUnauthenticated() || typeof req.user == 'undefined')
     {
         res.redirect('/');
+        return ;
     }
     User.findOne({email:req.user.email, googleId:req.user.googleId},function(err, user){
         if (err)
