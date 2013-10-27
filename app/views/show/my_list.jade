@@ -1,0 +1,14 @@
+extends ../layout
+block content
+    - shows.length
+    - if (shows.length>0)
+        ul.thumbnails
+            - each item in shows
+                - var poster = item.images.poster
+                li.span3
+
+                    a(href="/show/view/#{item.tvdb_id}/", class="thumbnail")
+                        img(src="#{poster.replace('.jpg', '-300.jpg')}", style="height:290px;")
+                    .caption(style="height:50px;")
+                        a(href="/show/view/#{item.tvdb_id}/")
+                            h5 #{item.title}

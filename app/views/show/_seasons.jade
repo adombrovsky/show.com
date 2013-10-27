@@ -1,0 +1,7 @@
+div.accordion#season_accordion
+    - each season in seasons
+        div.accordion-group
+            div.accordion-heading
+                a.accordion-toggle(data-href="/show/#{item_id}/season/#{season.season}/", data-parent="#season_accordion",href="#collapse#{season.season}") Season ##{season.season}
+            div.accordion-body.collapse(id="collapse#{season.season}")
+                div.accordion-inner

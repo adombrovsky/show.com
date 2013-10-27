@@ -1,0 +1,31 @@
+extends ../layout
+block content
+    h4 #{item.title}
+    hr
+    - var episodesList = null
+    ul.nav.nav-pills
+        - each season in item.seasons
+            if (season.season > 0)
+                if (season.season == selectedSeason)
+                    - episodesList = season.episodes
+                    li.active
+                        a(href="/show/#{item.tvdb_id}/season/#{season.season}/") Season ##{season.season}
+                else
+                    li
+                        a(href="/show/#{item.tvdb_id}/season/#{season.season}/") Season ##{season.season}
+
+    if (episodesList)
+        - each episode in episodesList
+            div.media
+                a.pull-left
+                    img.media-object(src="#{episode.images.screen}", style="max-height:120px;")
+                div.media-body
+                    h4.media-heading #{episode.title}
+                    b
+                        span.text-right #{new Date(parseInt(episode.first_aired_utc*1000)).toLocaleDateString()}
+                    p #{episode.overview}
+                    button.btn.btn-success(type="button", data-href="/show/season/#{episode.season}/episode/#{episode.episode}/add/", data-loading-text="Loading...") Посмотрел
+            hr
+    else
+        div
+            p.muted.well.well-small Выберите сезон

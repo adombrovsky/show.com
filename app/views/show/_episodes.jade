@@ -1,0 +1,15 @@
+- each episode in episodes
+    div.media
+        a.pull-left
+            img.media-object(src="#{episode.images.screen}", style="max-height:120px;")
+        div.media-body
+            h4.media-heading ##{episode.episode}. #{episode.title}
+            b
+                span.text-right #{new Date(parseInt(episode.first_aired_utc*1000)).toLocaleDateString()}
+            p #{episode.overview}
+            if (typeof ids[episode.episode] === 'undefined')
+                a.btn.ajax.btn-primary(href="/show/#{item_id}/season/#{episode.season}/episode/#{episode.episode}/add/") Посмотрел
+            else
+                a.btn.disabled.btn-success Уже Посмотрел
+
+    hr

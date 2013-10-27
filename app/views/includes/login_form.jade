@@ -1,0 +1,22 @@
+#login.modal.hide.fade
+    .modal-header
+        button(type="button", class="close", data-dismiss="modal", aria-hidden="true" ) &times;
+        h3  Login Form
+    .modal-body
+        form.form-horizontal.ajax(method="POST", action="/login/", enctype="application/x-www-form-urlencoded")
+            .control-group
+                label.control-label(for="inputEmail") Email
+                .controls
+                    input(type="text", id="inputEmail", placeholder="Email", name="email")
+            .control-group
+                label.control-label(for="inputPassword") Password
+                .controls
+                    input(type="password", id="inputPassword", placeholder="Password", name="password")
+            .control-group
+                .controls
+                    input(type="submit", class="btn btn-success offset1 span2", value="Sign In")
+            .control-group
+                .controls
+                    a(href='/login/google/', class="btn btn-primary span2 pull-right") Login with google
+    .modal-footer
+        a(href="#", class="btn", data-dismiss="modal") Close
