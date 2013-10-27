@@ -1,3 +1,4 @@
 node_modules
 app-cov
 coverage.html
+app/config.js
