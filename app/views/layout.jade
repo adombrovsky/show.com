@@ -14,7 +14,6 @@ html
                 if (isGuest)
                     a.brand.login-form(href='#login', data-toggle="modal") Login
                 else
-                    a.brand(href='/user/') Profile
                     a.brand(href='/logout/') Logout
 
         .container-fluid
@@ -28,6 +27,12 @@ html
                         if (!isGuest)
                             li
                                 a(href="/show/list/") View my shows list
+                            li.disabled
+                                a Manage Account
+                            li
+                                a(href="/user/") User Information
+                            li
+                                a(href="/user/settings") User Settings
 
                 .span7
                     form(method="GET", action="/show/find/")

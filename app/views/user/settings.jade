@@ -1,0 +1,32 @@
+extends ../layout
+block content
+    form(class="ajax", action="/user/settings/save",method="POST", enctype="application/x-www-form-urlencoded")
+        fieldset
+            legend Настройки сервиса
+            div.control-group
+                div.controls
+                    label.checkbox.control-label(for="email_notifier")
+                        span.tooltip-info.tr(title="На почту, которая указана при регистрации будет отправленно оповещение о выходе новой серии") Оповещение по почте
+                        -if (settings.email_notifier == 1)
+                            input(type="checkbox", checked="checked", name="email_notifier", id="email_notifier", value="1")
+                        - else
+                            input(type="checkbox", name="email_notifier", id="email_notifier", value="1")
+            div.control-group
+                div.controls
+                    label.checkbox.control-label(for="vk_notifier")
+                        span.tooltip-info.tr(title="На Ваш аккаунт в соц. сеть vk.com будет отправленно оповещение о выходе новой серии") Оповещение в vk.com
+                        -if (settings.vk_notifier == 1)
+                            input(type="checkbox", checked="checked", name="vk_notifier", id="vk_notifier", value="1")
+                        - else
+                            input(type="checkbox", name="vk_notifier", id="vk_notifier", value="1")
+            div.control-group
+                div.controls
+                    label.checkbox.control-label(for="phone_notifier")
+                        span.tooltip-info.tr(title="На Ваш номер телефона будет отправленно сообщение о выходе новой серии") Оповещение по телефону
+                        -if (settings.phone_notifier == 1)
+                            input(type="checkbox", checked="checked", name="phone_notifier", id="phone_notifier", value="1")
+                        - else
+                            input(type="checkbox", name="phone_notifier", id="phone_notifier", value="1")
+            div.control-group
+                div.controls
+                    button(type="submit", class="btn btn-success") Сохранить

@@ -51,3 +51,39 @@ exports.updateProfile = function (req, res)
     });
 
 };
+
+exports.settings = function (req, res)
+{
+    User.findOne({email:req.user.email},function(err, settings){
+        if (err)
+        {
+
+        }
+
+        res.render('user/settings',{settings:settings});
+    });
+};
+
+exports.updateSettings = function (req, res)
+{
+    var userSettings = req.body;
+    var returnObject = {};
+    User.findOne({email:req.user.email},function(err, record){
+        if (err)
+        {
+
+        }
+        if (!record)
+        {
+
+        }
+        record.setAttributes(userSettings);
+        record.save();
+        returnObject.success = true;
+        returnObject.action = 'popup';
+        returnObject.content = 'Data is updated!';
+        var returnObjectString = JSON.stringify(returnObject);
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end(returnObjectString);
+    });
+};

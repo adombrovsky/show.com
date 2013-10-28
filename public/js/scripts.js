@@ -24,6 +24,9 @@ $(document).ready(function(){
                     case 'redirect':
                         location.href = json.href;
                         break;
+                    case 'popup':
+                        console.log('i must implement popup function');
+                        break;
                     default:
                         break;
                 }
@@ -106,4 +109,6 @@ $(document).ready(function(){
             collapse.collapse('show');
         }
     });
+
+    $(".tooltip-info.tr").tooltip({placement:'right'});
 });

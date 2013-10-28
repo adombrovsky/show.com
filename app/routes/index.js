@@ -40,4 +40,6 @@ module.exports = function (app)
 
     app.get('/user/',user.index);
     app.post('/user/save',user.updateProfile);
+    app.get('/user/settings',user.settings);
+    app.post('/user/settings/save',user.updateSettings);
 };
