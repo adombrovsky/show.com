@@ -1,6 +1,7 @@
 exports.appConfig = {
     production:{
         http:{
+            host:'',
             port:5000
         },
         db:{
@@ -18,6 +19,7 @@ exports.appConfig = {
     },
     local:{
         http:{
+            host:'',
             port:8888
         },
         db:{
