@@ -1,19 +1,26 @@
 var express = require('express');
-var async = require('async');
-var mongoose = require('mongoose');
 var cfg = require('./config');
 var config = cfg.loadConfig(cfg.appConfig);
 var jade = require('jade');
 var app = express();
+var mongoose = require('mongoose');
+var mailer = require('express-mailer');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var User = require('./models/User');
-//user mongoDB for storing sessions
+
+var cronJobs = require('./library/cron');
+
+//use mongoDB for storing sessions
 var mongoStore = require('connect-mongo')(express);
 
 var mongoUri = 'mongodb://' + config.db.user+':'+ config.db.pass+'@'+config.db.host+':'+config.db.port+ '/' + config.db.name;
 mongoose.connect(mongoUri);
+
+//setting up mailer
+mailer.extend(app,config.mailer);
+
 /*settings for passport authentication*/
 passport.use(new GoogleStrategy(
     {
@@ -117,5 +124,8 @@ app.use(function (req, res) {
     res.status(404);
     res.render('404');
 });
+
+//run my cronjobs
+cronJobs.runJobs(app.request, app.response);
 
 module.exports = app;

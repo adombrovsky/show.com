@@ -1,0 +1,6 @@
+p Hi! New episode is comming!
+    - var poster = episode.episode.images.screen
+    h2
+        a(href="#{site_host}/show/view/#{episode.show.tvdb_id}/", target="_blank") #{episode.show.title} ##{episode.episode.number} &mdash; #{episode.episode.title}
+    img(src="#{poster}")
+    p #{episode.episode.overview}

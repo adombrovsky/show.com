@@ -1,15 +1,17 @@
 var main = require(__dirname + '/../controllers/main');
 var show = require(__dirname + '/../controllers/show');
 var user = require(__dirname + '/../controllers/user');
+var notification = require(__dirname + '/../controllers/notification');
 var passport = require('passport');
 var _ = require('underscore');
 
 function checkUserAuthentication (req, res, next) {
     res.locals.isGuest = req.isUnauthenticated();
-    var onlyLoggedUsers = ['/user/','/user/save/', '/show/list/'];
-    if (req.isUnauthenticated() && _.include(onlyLoggedUsers, req.path) )
+
+    var onlyLoggedUsers = ['/user/','/user/save/', '/show/list/', '/user/settings/', '/notification/', '/notification/count/'];
+    if (res.locals.isGuest && _.include(onlyLoggedUsers, req.path))
     {
-        res.redirect('/error/');
+        res.redirect('/');
     }
     else
     {
@@ -19,7 +21,7 @@ function checkUserAuthentication (req, res, next) {
 
 module.exports = function (app)
 {
-    app.get('*', checkUserAuthentication);
+    app.all('*', checkUserAuthentication);
     app.get('/', main.index);
     app.post('/login',main.loginLocal);
     app.get('/logout',main.logout);
@@ -42,4 +44,8 @@ module.exports = function (app)
     app.post('/user/save',user.updateProfile);
     app.get('/user/settings',user.settings);
     app.post('/user/settings/save',user.updateSettings);
+
+    app.get('/notification/',notification.index);
+    app.post('/notification/count',notification.getUserNotifications);
+    app.post('/notification/markAsRead',notification.setAsRead);
 };

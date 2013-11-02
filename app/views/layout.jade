@@ -6,6 +6,8 @@ html
         script(src="/js/jquery-1.8.2.min.js")
         script(src="/js/bootstrap.js")
         script(src="/js/masonry.pkgd.js")
+        script(src="/js/MyModal.js")
+        script(src="/js/MyFunctions.js")
         script(src="/js/scripts.js")
     body
         .navbar.inverse.navbar-inverse
@@ -25,6 +27,9 @@ html
                         li
                             a(href="/show/trend/") Trending Shows
                         if (!isGuest)
+                            li#notification_count
+                                a(href="/notification/") My notifications &nbsp;
+                                        span.badge.badge-success.hide
                             li
                                 a(href="/show/list/") View my shows list
                             li.disabled
@@ -45,3 +50,6 @@ html
                     block content
         #footer
         include  includes/login_form
+        include  includes/system_message_popup
+
+        input#isGuest(type="hidden", value="#{isGuest}")

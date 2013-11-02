@@ -1,5 +1,9 @@
 $(document).ready(function(){
     var body = $('body');
+    var functions = new MyFunctions();
+
+    functions.setNotificationCount();
+
     body.on('submit', 'form.ajax', function(){
         var t = $(this);
         var data = t.serializeArray();
@@ -48,6 +52,15 @@ $(document).ready(function(){
         if (el.length)
         {
             el.fadeOut('fast');
+        }
+        var jsonResponse = JSON.parse(jqxhr.responseText);
+        if (jsonResponse.success &&jsonResponse.popup)
+        {
+            var m = new MyModal({
+                modal:$("#system-message"),
+                body: jsonResponse.message,
+                title:jsonResponse.title
+            });
         }
     });
 
@@ -111,4 +124,23 @@ $(document).ready(function(){
     });
 
     $(".tooltip-info.tr").tooltip({placement:'right'});
+
+    $(".set-as-read").on('click',function(){
+        var t = $(this);
+        var id = t.data('id');
+
+        $.ajax({
+            type:'POST',
+            url:'/notification/markAsRead/',
+            data:{id:id},
+            dataType:'json',
+            success:function(json)
+            {
+                if (json.success)
+                {
+                    functions.setNotificationCount();
+                }
+            }
+        });
+    });
 });

@@ -6,7 +6,11 @@ var Season = require('../models/Season');
 var Episode = require('../models/Episode');
 var UserShow = require('../models/UserShow');
 var UserEpisode = require('../models/UserEpisode');
+var UserNotification = require('../models/UserNotification');
 var async = require('async');
+var _ = require('underscore');
+var dateformat = require('dateformat');
+
 exports.find = function (req, res)
 {
     var q=req.query.query;
@@ -323,4 +327,115 @@ exports.remove = function (req, res)
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end(returnObjectString);
     });
+};
+
+/*cron actions*/
+
+/**
+ * 1) Get shows_id selected by all users
+ * 2) @deprecated Get shows by id(doesn't need)
+ * 3) Set current date
+ * 4) Get all premiers for this day
+ * 5) Check user selected show and premier show
+ * 6) Add notification to db and connect it to users
+ * @param req
+ * @param res
+ */
+exports.checkNewEpisodes = function(req, res)
+{
+    async.series(
+        {
+            showsUsers:function (callback)
+            {
+                console.log('get users show');
+                UserShow.find({},function(err, records){
+                    if (err)
+                    {
+                        callback(err,{});
+                    }
+                    else
+                    {
+                        var showsUsers = {};
+                        for (var i=0;i<records.length;i++)
+                        {
+                            var c = records[i];
+                            showsUsers[c.show_id] = showsUsers[c.show_id] || [];
+                            showsUsers[c.show_id].push(c.user_id);
+                        }
+                        callback(null, showsUsers);
+                    }
+                });
+            },
+            premiers:function (callback)
+            {
+                console.log('get premiers');
+                var now = new Date();
+                now.setDate(3);
+                var currentDate = dateformat(now,'yyyymmdd');
+                api.sendRequest(
+                    {
+                        url: '/calendar/shows.json/',
+                        queryParams: {date:currentDate,days:1}
+                    },
+                    function (err, response, body)
+                    {
+                        if (err)
+                        {
+                            callback(err, {});
+                        }
+                        else
+                        {
+                            callback(null,body[0].episodes);
+                        }
+                    }
+                );
+            }
+        },
+        function(err, result){
+            if (err)
+            {
+                console.log('error in result function: ',err);
+            }
+            var now = new Date();
+            var currentDate = dateformat(now,'fullDate');
+            console.log('run result function');
+            for (var i = 0; i<result.premiers.length;i++)
+            {
+                var c = result.premiers[i];
+                if (typeof result.showsUsers[c.show.tvdb_id] !== 'undefined')
+                {
+                    var usersList = result.showsUsers[c.show.tvdb_id];
+                    for (var j=0;j<usersList.length;j++)
+                    {
+                        var a = new UserNotification();
+                        var data = {
+                            title: 'New episode is coming!',
+                            text: 'Hi! You are subscribed for a new episodes of ' +
+                                '<a href="/show/view/'+ c.show.tvdb_id+'/">' + c.show.title +'</a> notification.' +
+                                currentDate + ' at '+ c.show.air_time+ ' episode <b>#'+ c.episode.number+'</b> shows on a tv!',
+                            date: new Date().getTime(),
+                            user_id:usersList[j],
+                            type_id:1,
+                            unread:1,
+                            episode_info:c
+                        };
+
+                        new User().sendNotifications(data, res.app.mailer);
+                        a.setAttributes(data);
+                        a.save(function(err){
+                            if (err)
+                            {
+                                console.log('error for user:', data.user_id);
+                                console.log('error:',err);
+                            }
+                            else
+                            {
+                                console.log('added message for user:', data.user_id);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    );
 };

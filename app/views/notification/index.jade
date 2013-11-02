@@ -1,0 +1,7 @@
+extends ../layout
+block content
+    h2 Notification list
+        button.pull-right.btn.btn-primary.set-as-read Mark all as read
+    - each item in notifications
+        .alert.alert-block.alert-success.fade.in #!{item.text)
+            a.close.set-as-read(type="button", data-dismiss="alert", data-id="#{item._id}") &times;

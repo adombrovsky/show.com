@@ -17,7 +17,10 @@
         "passport-google": ">= 0.0.0",
         "passport-google-oauth": ">= 0.0.0",
         "request": "2.22.0",
-        "underscore": "1.5.2"
+        "cron": "1.0.1",
+        "underscore": "1.5.2",
+        "express-mailer": "0.2.0",
+        "dateformat": "1.2.3"
     },
     "devDependencies": {
         "mocha": "1.7.0",

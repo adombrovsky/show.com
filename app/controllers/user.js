@@ -69,19 +69,17 @@ exports.updateSettings = function (req, res)
     var userSettings = req.body;
     var returnObject = {};
     User.findOne({email:req.user.email},function(err, record){
-        if (err)
-        {
+        if (err){}
+        if (!record){}
 
-        }
-        if (!record)
-        {
-
-        }
-        record.setAttributes(userSettings);
+        record.email_notifier = userSettings.email_notifier;
+        record.vk_notifier = userSettings.vk_notifier;
+        record.phone_notifier = userSettings.phone_notifier;
         record.save();
         returnObject.success = true;
-        returnObject.action = 'popup';
-        returnObject.content = 'Data is updated!';
+        returnObject.popup = true;
+        returnObject.title = 'Save notification settings';
+        returnObject.message = 'Data is updated!';
         var returnObjectString = JSON.stringify(returnObject);
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.end(returnObjectString);
