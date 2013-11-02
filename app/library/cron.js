@@ -8,7 +8,7 @@ var jobs = {
 //        new cronJob('5 */8 * * *', function(){
 //            show.checkNewEpisodes(req, res);
 //        }, null, true, "Europe/Kiev");
-        show.checkNewEpisodes(req, res);
+//        show.checkNewEpisodes(req, res);
     }
 };
 
