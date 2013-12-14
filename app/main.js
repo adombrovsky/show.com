@@ -37,20 +37,34 @@ passport.use(new GoogleStrategy(
             function(err, user){
                 if (err) { return done(err); }
                 if (!user) {
-                    var user = new User();
+                    user = new User();
                     user.name       = profile.name.familyName + ' ' + profile.name.givenName;
                     user.email      = profile.emails[0].value;
                     user.googleId   = profile.id;
-                    user.salt       = user.makeSalt(),
+                    user.salt       = user.makeSalt();
                     user.password   = user.encryptPassword('test');
-                    user.validate(function(){
-                        user.save();
-                    });
-                    return done(null, false, { message: 'Incorrect username.' });
+//                    user.validate(function(){
+//                        user.save();
+//
+//                    });
                 }
+//                else
+//                {
+//                    user.googleId = profile.id;
+//                    user.save();
+//                    return done(null, user);
+//                }
                 user.googleId = profile.id;
-                user.save();
-                return done(null, user);
+                user.save(function(err){
+                    if (err)
+                    {
+                        return done(null, false, { message: 'Incorrect username.' });
+                    }
+                    else
+                    {
+                        return done(null, user);
+                    }
+                });
             }
         );
     }

@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-var nodemailer = require('nodemailer');
 var cfg = require('../config');
 var config = cfg.loadConfig(cfg.appConfig);
 
@@ -26,10 +25,7 @@ UserSchema.methods = {
     authenticate: function(password)
     {
         return this.encryptPassword(password) === this.password;
-    }
-};
-
-UserSchema.methods = {
+    },
     setAttributes: function (data)
     {
         for (var a in this.schema.tree)
@@ -46,9 +42,14 @@ UserSchema.methods = {
         return this;
     },
     sendNotifications: function(data, mailer)
-    {
-        var model = this.model('User');
-        model.findById(data.user_id,function(err, user){
+   {
+        var model = mongoose.model('User');
+        model.findOne({"_id":data.user_id},function(err, user){
+console.log('check user');
+console.log(data.user_id);
+console.log(user);
+console.log('end check user');
+            if (err || !user){return null;}
             if (user.email_notifier)
             {
                 user.sendEmailMessage(user, data, mailer);

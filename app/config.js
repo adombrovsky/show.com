@@ -1,6 +1,7 @@
 exports.appConfig = {
     production:{
         http:{
+            host:'',
             port:5000
         },
         db:{
@@ -8,28 +9,51 @@ exports.appConfig = {
             pass : '',
             host : '',
             port : 47458,
-            name : 'show_com'
+            name : ''
         },
         googleApi:{
             clientID: '',
             clientSecret: '',
             callbackURL: "http://showcom.herokuapp.com/login/google/callback"
+        },
+        mailer:{
+            from: 'no-reply@example.com',
+            host: 'smtp.gmail.com', // hostname
+            secureConnection: true, // use SSL
+            port: 465, // port for secure SMTP
+            transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
+            auth: {
+                user: '',
+                pass: ''
+            }
         }
     },
     local:{
         http:{
-            port:8888
+            host:'http://show.adombrovsky.name',
+            port:5000
         },
         db:{
-            user : 'farw',
-            pass : '111',
-            host : 'localhost',
-            name : 'show'
+            user : '',
+            pass : '',
+            host : '',
+            name : ''
         },
         googleApi:{
             clientID: '',
             clientSecret: '',
-            callbackURL: "http://show.com:8888/login/google/callback"
+            callbackURL: "http://show.adombrovsky.name/login/google/callback"
+        },
+        mailer:{
+            from: '',
+            host: '', // hostname
+            secureConnection: true, // use SSL
+            port: 465, // port for secure SMTP
+            transportMethod: 'SMTP', // default is SMTP. Accepts anything that nodemailer accepts
+            auth: {
+                user: '',
+                pass: ''
+            }
         }
     }
 };

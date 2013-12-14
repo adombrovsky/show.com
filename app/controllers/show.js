@@ -370,7 +370,6 @@ exports.checkNewEpisodes = function(req, res)
             {
                 console.log('get premiers');
                 var now = new Date();
-                now.setDate(3);
                 var currentDate = dateformat(now,'yyyymmdd');
                 api.sendRequest(
                     {
