@@ -25,6 +25,8 @@ module.exports = function (app)
     app.get('/', main.index);
     app.post('/login',main.loginLocal);
     app.get('/logout',main.logout);
+//    app.get('/partials/:name',main.partials);
+    app.get('/views/:folder/:name',main.partials);
 
     app.get('/login/google',passport.authenticate('google',{scope: ['https://www.googleapis.com/auth/userinfo.profile','https://www.googleapis.com/auth/userinfo.email'] }));
     app.get('/login/google/callback',passport.authenticate('google',{ failureRedirect: '/' }),main.loginGoogle);

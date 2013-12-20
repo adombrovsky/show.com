@@ -1,34 +1,47 @@
-extends ../layout
-block content
-    - var poster = show.images.poster
-    a.thumbnail.span3
-        img(src="#{poster.replace('.jpg', '-300.jpg')}")
+div(ng-controller="ShowDetailsCtrl")
+    div.pull-left
+        a.thumbnail.span11
+            img(ng-src="{{item.show.images.poster|getPosterUrl:300}}")
+        div.clearfix
     .offset3
-        h4 #{show.title}
-        p #{show.overview}
+        h4 {{item.show.title}}
+        p {{item.show.overview}}
 
         b Год выхода:
 
-        |  #{new Date(parseInt(show.first_aired*1000)).toLocaleDateString()}
+        |  {{item.show.first_aired*1000|date:'medium'}}
         br
         br
-        a.pull-right.btn.ajax.btn-info(href="/show/#{show.tvdb_id}/seasons/") Список сезонов
-        br
-        br
-        div#seasons_list
-        br
-        if (!isGuest)
-            if (watchedByUser)
-                a.btn.btn-success.ajax.hide(href="javascript:void(0)")
+        a.pull-right.btn.ajax.btn-info(ng-click="seasonsList(item.show.tvdb_id)") Список сезонов
+        div(ng-show="!item.isGuest")
+            div(ng-show="!item.watchedByUser")
+                a.btn.btn-success(ng-click="addShowToWatch(item.show.tvdb_id)")
                     i.icon-ok.icon-white
                     | &nbsp;Я его смотрю!
-                a.btn.btn-danger.ajax(href="/show/remove/#{show.tvdb_id}/")
+            div(ng-show="item.watchedByUser")
+                a.btn.btn-danger(ng-click="removeShowFromWatch(item.show.tvdb_id)")
                     i.icon-ban-circle.icon-white
                     | &nbsp;Я его не смотрю!
-            else
-                a.btn.btn-success.ajax(href="/show/add/#{show.tvdb_id}/")
-                    i.icon-ok.icon-white
-                    | &nbsp;Я его смотрю!
-                a.btn.btn-danger.hide.ajax(href="/show/remove/#{show.tvdb_id}/")
-                    i.icon-ban-circle.icon-white
-                    | &nbsp;Я его не смотрю!
+        br
+        br
+        div#seasons_list.btn-group(ng-show="seasonsAreLoaded")
+            a.btn.btn-info(ng-repeat="season in seasons", ng-if="season.season", ng-click="episodesList(item.show.tvdb_id,season.season)", ng-class="{active:seasonIsLoaded === season.season}") Season # {{season.season}}
+        div(ng-show="seasonIsLoaded")
+            br
+            div.media(ng-repeat="episode in episodes|orderBy:byEpisodeNumber:reverse")
+                a.pull-left
+                    img.media-object(ng-src="{{episode.images.screen}}", style="max-height:120px;")
+                div.media-body
+                    h4.media-heading # {{episode.episode}} . {{episode.title}}
+                    b
+                        span.text-right {{episode.first_aired_utc*1000|date:'medium'}}
+                    p  {{episode.overview}}
+                    div(ng-show="!item.isGuest")
+                        div(ng-if="!ids[episode.episode]")
+                            a.btn.btn-primary(ng-click="addEpisodeToWatch(item_id,episode.season,episode.episode)") Посмотрел
+                        div(ng-if="ids[episode.episode]")
+                            a.btn.disabled.btn-success Уже Посмотрел
+
+                hr
+        br
+        br

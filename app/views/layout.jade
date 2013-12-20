@@ -1,20 +1,24 @@
-doctype 5
-html
+!!!5
+html(ng-app="showApp")
     head
         title Shows
         link(href="/css/bootstrap.css", media="all", rel="stylesheet", type="text/css")
         script(src="/js/jquery-1.8.2.min.js")
-        script(src="/js/bootstrap.js")
-        script(src="/js/masonry.pkgd.js")
-        script(src="/js/MyModal.js")
-        script(src="/js/MyFunctions.js")
+        script(src="/js/angular.js")
+        script(src="/js/controllers.js")
+        script(src="/js/services.js")
+        script(src="/js/filters.js")
+        script(src="/js/directives.js")
+        script(src="/js/angular-route.js")
+        script(src="/js/ui-bootstrap-0.7.0.js")
+        script(src="/js/ui-bootstrap-tpls-0.7.0.js")
         script(src="/js/scripts.js")
     body
         .navbar.inverse.navbar-inverse
             .navbar-inner
                 a.brand(href='/') Shows
                 if (isGuest)
-                    a.brand.login-form(href='#login', data-toggle="modal") Login
+                    a.brand.login-form(ng-href='/login/google/') Login via Google
                 else
                     a.brand(href='/logout/') Logout
 
@@ -22,34 +26,26 @@ html
             .row-fluid
                 .span2
                     ul.nav.nav-tabs.nav-stacked
-                        //-li
-                            a(href="/show/find") Find Show
                         li
-                            a(href="/show/trend/") Trending Shows
+                            a(href="{{'#/show/trend/'}}") Trending Shows
                         if (!isGuest)
-                            li#notification_count
-                                a(href="/notification/") My notifications &nbsp;
-                                        span.badge.badge-success.hide
+                            li#notification_count(ng-controller="MainCtrl")
+                                a(href="#/notification/") My notifications &nbsp;
+                                        span.badge.badge-success(ng-hide="notificationCount < 0") {{notificationCount}}
                             li
-                                a(href="/show/list/") View my shows list
-                            li.disabled
-                                a Manage Account
+                                a(href="#/show/list/") View my shows list
                             li
-                                a(href="/user/") User Information
+                                a(href="#/user/") User Information
                             li
-                                a(href="/user/settings") User Settings
+                                a(href="#/user/settings") User Settings
 
                 .span7
-                    form(method="GET", action="/show/find/")
+                    form(ng-submit="find()",novalidate="true", ng-controller="FindCtrl")
                         .input-append.span5
-                            input.span15(type="text", name="query", value="")
+                            input.span15(type="text", ng-model="query", ng-required="true", ng-minlength=3)
                             button.btn(type="submit") Search
-
-                        img.offset1#loader(src="/img/257.gif", style="width:30px;display:none;")
+                        img.offset1#loader(src="/img/257.gif", style="width:30px", ng-show="ajaxStarted")
                         div.clearfix
-                    block content
+                    div(ng-view)
         #footer
-        include  includes/login_form
-        include  includes/system_message_popup
-
         input#isGuest(type="hidden", value="#{isGuest}")

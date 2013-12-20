@@ -1,0 +1,1 @@
+var showDirectives = angular.module('showDirectives',[]);

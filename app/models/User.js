@@ -9,9 +9,9 @@ var UserSchema = mongoose.Schema({
     password        : String,
     googleId        : String,
     salt            : String,
-    email_notifier  :Number,
-    vk_notifier     :Number,
-    phone_notifier  :Number
+    email_notifier  : Number,
+    vk_notifier     : Number,
+    phone_notifier  : Number
 });
 UserSchema.methods = {
     encryptPassword: function(password)

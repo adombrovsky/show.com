@@ -1,15 +1,14 @@
 var User = require('../models/User');
 var UserNotification = require('../models/UserNotification');
-var dateformat = require('dateformat');
 
 exports.index = function (req, res)
 {
-    UserNotification.find({user_id:req.user._id, unread:1},null,{limit:200},function(err, records){
+    UserNotification.find({user_id:req.user._id, unread:1},null,{limit:200, sort:{date:-1}},function(err, records){
         if (err)
         {
 
         }
-        res.render('notification/index',{notifications:records,pretty:false});
+        res.json(records);
     });
 };
 

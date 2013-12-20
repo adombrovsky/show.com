@@ -1,20 +1,18 @@
-extends ../layout
-block content
-    form(class="form-horizontal ajax", action="/user/save/",method="POST", enctype="application/x-www-form-urlencoded")
-        fieldset
-            legend Название формы
-            div.control-group
-                label.control-label(for="name") Имя
-                div.controls
-                    input(type="text", name="name", id="name", placeholder="Введите свое имя", value="#{name}")
-            div.control-group
-                label.control-label(for="email") E-mail
-                div.controls
-                    input(type="text", name="email", id="email", placeholder="Введите свой E-mail", value="#{email}")
-            div.control-group
-                label.control-label(for="password") Новый пароль
-                div.controls
-                    input(type="password", name="password", id="password")
-            div.control-group
-                div.controls
-                    button(type="submit", class="btn btn-success") Сохранить
+form(class="form-horizontal ajax", ng-controller="UserProfileCtrl", ng-submit="saveUserInfo()")
+    fieldset
+        legend Название формы
+        div.control-group
+            label.control-label(for="name") Имя
+            div.controls
+                input(type="text", name="name", id="name", placeholder="Введите свое имя", ng-model="user.name")
+        div.control-group
+            label.control-label(for="email") E-mail
+            div.controls
+                input(type="text", name="email", id="email", autocomplete="off",placeholder="Введите свой E-mail", ng-model="user.email")
+        div.control-group
+            label.control-label(for="password") Новый пароль
+            div.controls
+                input(type="password", name="password", id="password", ng-model="user.password")
+        div.control-group
+            div.controls
+                button(type="submit", class="btn btn-success") Сохранить

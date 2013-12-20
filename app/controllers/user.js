@@ -7,17 +7,22 @@ exports.index = function (req, res)
         res.redirect('/');
         return ;
     }
-    User.findOne({email:req.user.email, googleId:req.user.googleId},function(err, user){
-        if (err)
+    User.findOne(
+        {
+            email:req.user.email,
+            googleId:req.user.googleId
+        },
+        {
+            'name':true,
+            'email':true,
+            'password':true
+        },
+        function(err, user){
+        if (err || !user)
         {
 
         }
-        if (!user)
-        {
-
-        }
-
-        res.render('user/profile',user);
+        res.json(user);
 
     });
 };
@@ -45,9 +50,7 @@ exports.updateProfile = function (req, res)
         user.save();
         returnObject.success = true;
         returnObject.action = 'reload';
-        var returnObjectString = JSON.stringify(returnObject);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(returnObjectString);
+        res.json(returnObject);
     });
 
 };
@@ -60,7 +63,7 @@ exports.settings = function (req, res)
 
         }
 
-        res.render('user/settings',{settings:settings});
+        res.json(settings);
     });
 };
 
@@ -72,16 +75,14 @@ exports.updateSettings = function (req, res)
         if (err){}
         if (!record){}
 
-        record.email_notifier = userSettings.email_notifier;
-        record.vk_notifier = userSettings.vk_notifier;
-        record.phone_notifier = userSettings.phone_notifier;
+        record.email_notifier = userSettings.email_notifier ? 1:0;
+        record.vk_notifier = userSettings.vk_notifier ? 1:0;
+        record.phone_notifier = userSettings.phone_notifier ? 1:0;
         record.save();
         returnObject.success = true;
         returnObject.popup = true;
         returnObject.title = 'Save notification settings';
         returnObject.message = 'Data is updated!';
-        var returnObjectString = JSON.stringify(returnObject);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(returnObjectString);
+        res.json(returnObject);
     });
 };

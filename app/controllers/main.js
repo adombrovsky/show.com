@@ -7,6 +7,11 @@ exports.index = function (req, res)
     res.render('main/index');
 };
 
+exports.partials = function(req, res)
+{
+    res.render(req.params.folder+'/'+req.params.name);
+};
+
 exports.loginGoogle = function (req, res)
 {
     var getParams = req.query;
@@ -44,9 +49,7 @@ exports.loginLocal = function (req, res, next)
                     returnObject.action = 'reload';
                 });
             }
-            var returnObjectString = JSON.stringify(returnObject);
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.end(returnObjectString);
+            res.json(returnObject);
         })(req, res, next);
     }
 };

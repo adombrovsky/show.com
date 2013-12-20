@@ -1,4 +1,3 @@
-//var api=require('../library/kinobazza.js');
 var api=require('../library/trakt.js');
 var User = require('../models/User');
 var Show = require('../models/Show');
@@ -21,12 +20,12 @@ exports.find = function (req, res)
             queryParams: {query:encodeURIComponent(q)}
         };
         api.sendRequest(searchOptions,function (err, response, body){
-            res.render('show/find',{result:(body?body:[]), query:q});
+            res.json(body);
         });
     }
     else
     {
-        res.render('show/find',{result:[], query:''});
+        res.json({});
     }
 };
 
@@ -39,7 +38,7 @@ exports.trend = function (req, res)
         },
         function (err, response, body)
         {
-            res.render('show/find',{result:body.slice(0,20)});
+            res.json(body);
         }
     );
 
@@ -47,7 +46,7 @@ exports.trend = function (req, res)
 exports.view = function (req, res)
 {
     var id=req.params.id;
-    var localResult = {};
+//    var localResult = {};
     async.parallel(
         [
             function(callback){
@@ -65,29 +64,25 @@ exports.view = function (req, res)
                                 var show = new Show();
                                 show.setAttributes(body);
                                 show.validate(function(){show.save();});
-                                localResult.show = show;
-                                callback();
+                                callback(err, show);
                             }
                         );
                     }
                     else
                     {
-                        localResult.show = show;
-                        callback();
+                        callback(err, show);
                     }
                 });
             },
             function(callback){
-                localResult.isGuest = res.locals.isGuest;
                 UserShow.findOne({user_id:req.user? req.user._id:0,show_id:id},function(err, record){
                     if (err) return callback(err);
-                    localResult.watchedByUser = record ? true: false;
-                    callback();
+                    callback(err, {isGuest:res.locals.isGuest, watchedByUser:record ? true: false,});
                 });
             },
         ],
-        function(err){
-            res.render('show/view',localResult);
+        function(err, result){
+            res.json({show:result[0],isGuest:result[1].isGuest,watchedByUser:result[1].watchedByUser});
         }
     );
 };
@@ -95,58 +90,38 @@ exports.view = function (req, res)
 exports.seasons = function (req, res)
 {
     var id=req.params.id;
-    var local = {};
-    async.series(
-        [
-            function (callback)
-            {
-                Season.find({show_id:id},function(err, season){
-                    local.season = season;
-                    callback();
-                });
-            },
-            function (callback)
-            {
-                if (local.season.length<1)
-                {
-                    api.sendRequest(
-                        {
-                            url: '/show/seasons.json/',
-                            queryParams: {id:id}
-                        },
-                        function (err, response, body)
-                        {
-                            local.season = body;
-                            for (var i=0; i<body.length;i++)
-                            {
-                                var s = new Season();
-                                s.setAttributes(body[i]);
-                                s.show_id = id;
-                                s.save();
-                            }
-                            callback();
-                        }
-                    );
-                }
-                else
-                {
-                    callback();
-                }
-            }
-        ],
-        function(err){
-            res.render('show/_seasons',{seasons:local.season,item_id:id},function(err, html){
-                var returnObject = {
-                    seasons:html,
-                    err:err
-                };
-                returnObject.success = true;
-                var returnObjectString = JSON.stringify(returnObject);
-                res.writeHead(200, {'Content-Type': 'text/plain'});
-                res.end(returnObjectString);
-            });
+    Season.find({show_id:id},function(err, season){
+        console.log(season);
+        var result = {};
+        if (err) {
+            result.message = 'error';
         }
-    );
+        else if (!season)
+        {
+            api.sendRequest(
+                {
+                    url: '/show/seasons.json/',
+                    queryParams: {id:id}
+                },
+                function (err, response, body)
+                {
+                    for (var i=0; i<body.length;i++)
+                    {
+                        var s = new Season();
+                        s.setAttributes(body[i]);
+                        s.show_id = id;
+                        s.save();
+                    }
+                    result.seasons = body;
+                }
+            );
+        }
+        else
+        {
+            result.seasons = season;
+        }
+        res.json(result.seasons);
+    });
 };
 
 exports.episodes = function (req, res)
@@ -154,14 +129,12 @@ exports.episodes = function (req, res)
     var id=req.params.id;
     var season=req.params.season;
     var userId = req.user ? req.user._id : -1;
-    var local = {};
     async.parallel(
         [
             function (callback)
             {
                 Episode.find({show_id:id,season:season},function(err, episode){
-                    local.episode = episode;
-                    if (local.episode.length<1)
+                    if (!episode || episode.length<1)
                     {
                         api.sendRequest(
                             {
@@ -170,7 +143,6 @@ exports.episodes = function (req, res)
                             },
                             function (err, response, body)
                             {
-                                local.episode = body;
                                 for (var i=0; i<body.length;i++)
                                 {
                                     var s = new Episode();
@@ -178,39 +150,39 @@ exports.episodes = function (req, res)
                                     s.show_id = id;
                                     s.save();
                                 }
-                                callback();
+                                callback(err,body);
                             }
                         );
                     }
                     else
                     {
-                        callback();
+                        callback(err, episode);
                     }
                 });
             },
             function (callback)
             {
                 UserEpisode.find({user_id:userId,show_id:id,season:season},function(err, data){
-                    local.ids = {};
+                    var ids = {};
+                    if (err) return callback(err);
                     for (var i=0; i<data.length;i++)
                     {
-                        local.ids[data[i].episode] = true;
+                        ids[data[i].episode] = true;
                     }
-                    callback();
+                    callback(err, ids);
                 });
             }
         ],
-        function(err){
-            res.render('show/_episodes',{episodes:local.episode,item_id:id, season:season, ids:local.ids,isGuest :res.locals.isGuest},function(err, html){
-                var returnObject = {
-                    season:html,
-                    err:err
-                };
-                returnObject.success = true;
-                var returnObjectString = JSON.stringify(returnObject);
-                res.writeHead(200, {'Content-Type': 'text/plain'});
-                res.end(returnObjectString);
-            });
+        function(err, result){
+            res.json(
+                {
+                    episodes:result[0],
+                    item_id:id,
+                    season:season,
+                    ids:result[1],
+                    isGuest :res.locals.isGuest
+                }
+            );
         }
     );
 };
@@ -226,9 +198,7 @@ exports.addEpisode = function (req, res)
         var returnObject = {};
         returnObject.success = true;
         returnObject.episodeAdd = true;
-        var returnObjectString = JSON.stringify(returnObject);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(returnObjectString);
+        res.json(returnObject)
     });
 };
 
@@ -239,38 +209,37 @@ exports.list = function (req, res)
         res.redirect('/');
     }
 
-    var localResult = {ids:[],shows:[]};
-    async.series(
+    async.waterfall(
         [
             function(callback)
             {
                 UserShow.find({user_id:req.user._id},function(err,ushows){
-                    if (err) return callback(err)
+                    var ids = [];
+                    if (err) return callback(err);
                     for(var i=0;i<ushows.length;i++)
                     {
-                        localResult.ids.push(ushows[i].show_id);
+                        ids.push(ushows[i].show_id);
                     }
-                    callback();
+                    callback(err, ids);
                 });
             },
-            function(callback)
+            function(ids, callback)
             {
-                if (localResult.ids.length>0)
+                if (ids.length>0)
                 {
-                    Show.find({ tvdb_id: { $in: localResult.ids } },function(err, shows){
+                    Show.find({ tvdb_id: { $in: ids } },function(err, shows){
                         if (err) return callback(err);
-                        localResult.shows = shows;
-                        callback();
+                        callback(err, shows, ids);
                     });
                 }
                 else
                 {
-                    callback();
+                    callback('error',[],ids);
                 }
             },
         ],
-        function(err){
-            res.render('show/my_list',localResult);
+        function(err,result,ids){
+            res.json({shows:result, ids:ids});
         }
     );
 };
@@ -310,9 +279,7 @@ exports.add = function (req, res)
         }
         var returnObject = {};
         returnObject.success = true;
-        var returnObjectString = JSON.stringify(returnObject);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(returnObjectString);
+        res.json(returnObject);
     });
 
 };
@@ -323,9 +290,7 @@ exports.remove = function (req, res)
         if (err) {}
         var returnObject = {};
         returnObject.success = true;
-        var returnObjectString = JSON.stringify(returnObject);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(returnObjectString);
+        res.json(returnObject);
     });
 };
 
@@ -410,7 +375,7 @@ exports.checkNewEpisodes = function(req, res)
                         var data = {
                             title: 'New episode is coming!',
                             text: 'Hi! You are subscribed for a new episodes of ' +
-                                '<a href="/show/view/'+ c.show.tvdb_id+'/">' + c.show.title +'</a> notification.' +
+                                '<a href="#/show/view/'+ c.show.tvdb_id+'/">' + c.show.title +'</a> notification.' +
                                 currentDate + ' at '+ c.show.air_time+ ' episode <b>#'+ c.episode.number+'</b> shows on a tv!',
                             date: new Date().getTime(),
                             user_id:usersList[j],

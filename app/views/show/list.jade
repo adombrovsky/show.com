@@ -1,4 +1,4 @@
-ul.thumbnails(ng-controller="FindCtrl")
+ul.thumbnails(ng-controller="UserShowsCtrl")
     li(ng-repeat="item in shows")
         a(ng-href="#/show/view/{{item.tvdb_id}}/", class="thumbnail")
             img(ng-src="{{item.images.poster|getPosterUrl:300}}", style="height:290px;")
