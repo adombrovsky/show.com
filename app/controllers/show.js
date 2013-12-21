@@ -46,7 +46,6 @@ exports.trend = function (req, res)
 exports.view = function (req, res)
 {
     var id=req.params.id;
-//    var localResult = {};
     async.parallel(
         [
             function(callback){
@@ -247,40 +246,63 @@ exports.list = function (req, res)
 exports.add = function (req, res)
 {
     var data = req.params;
-    Show.findOne({tvdb_id:data.id},function(err, show){
-        var userShow = new UserShow();
-        userShow.user_id = req.user._id;
-        if (err)
-        {
-        }
-        if (!show)
-        {
-            api.sendRequest(
+    async.waterfall(
+        [
+            function(callback)
+            {
+                UserShow.findOne({user_id:req.user._id, show_id:data.id},function(err,show){
+                    if (err) return callback(err);
+                    callback(err, show);
+                });
+            },
+            function(show, callback)
+            {
+                if (!show)
                 {
-                    url: '/show/summary.json/',
-                    queryParams: {id:data.id}
-                },
-                function (err, response, body)
-                {
-                    var show = new Show();
-                    show.setAttributes(body);
-                    show.validate(function(){
-                        show.save();
-                        userShow.show_id = data.id;
-                        userShow.save();
+                    Show.findOne({tvdb_id:data.id},function(err, show){
+                        var userShow = new UserShow();
+                        userShow.user_id = req.user._id;
+                        if (err){ return callback(err);}
+                        if (!show)
+                        {
+                            api.sendRequest(
+                                {
+                                    url: '/show/summary.json/',
+                                    queryParams: {id:data.id}
+                                },
+                                function (err, response, body)
+                                {
+                                    var show = new Show();
+                                    show.setAttributes(body);
+                                    show.validate(function(){
+                                        show.save();
+                                        userShow.show_id = data.id;
+                                        userShow.save();
+                                    });
+                                }
+                            );
+                        }
+                        else
+                        {
+                            userShow.show_id = data.id;
+                            userShow.save();
+                        }
                     });
+                    callback(null,'show is added successfully');
                 }
-            );
+                else
+                {
+                    callback('error','show is already added');
+                }
+            },
+        ],
+        function(err,result){
+            var returnObject = {};
+            returnObject.success = true;
+            returnObject.message = result;
+            res.json(returnObject);
         }
-        else
-        {
-            userShow.show_id = data.id;
-            userShow.save();
-        }
-        var returnObject = {};
-        returnObject.success = true;
-        res.json(returnObject);
-    });
+    );
 
 };
 exports.remove = function (req, res)
