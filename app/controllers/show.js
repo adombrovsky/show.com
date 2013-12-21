@@ -89,13 +89,12 @@ exports.view = function (req, res)
 exports.seasons = function (req, res)
 {
     var id=req.params.id;
-    Season.find({show_id:id},function(err, season){
-        console.log(season);
+    Season.find({show_id:id},function(err, seasons){
         var result = {};
         if (err) {
             result.message = 'error';
         }
-        else if (!season)
+        else if (seasons.length <1)
         {
             api.sendRequest(
                 {
@@ -117,7 +116,7 @@ exports.seasons = function (req, res)
         }
         else
         {
-            result.seasons = season;
+            result.seasons = seasons;
         }
         res.json(result.seasons);
     });
