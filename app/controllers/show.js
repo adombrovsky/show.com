@@ -1,4 +1,5 @@
 var api=require('../library/trakt.js');
+var vkApi=require('../library/vk.js');
 var User = require('../models/User');
 var Show = require('../models/Show');
 var Season = require('../models/Season');
@@ -20,7 +21,23 @@ exports.find = function (req, res)
             queryParams: {query:encodeURIComponent(q)}
         };
         api.sendRequest(searchOptions,function (err, response, body){
-            res.json(body);
+            var isGuest = res.locals.isGuest;
+            if (req.user)
+            {
+                UserShow.find({user_id:req.user._id},function(err,ushows){
+                    var ids = [];
+                    if (err) return callback(err);
+                    for(var i=0;i<ushows.length;i++)
+                    {
+                        ids[ushows[i].show_id] = true;
+                    }
+                    res.json({body:body.splice(0,200), ids:ids, isGuest:isGuest});
+                });
+            }
+            else
+            {
+                res.json({body:body.splice(0,200),ids:[], isGuest: isGuest});
+            }
         });
     }
     else
@@ -38,7 +55,22 @@ exports.trend = function (req, res)
         },
         function (err, response, body)
         {
-            res.json(body);
+            if (!res.locals.isGuest)
+            {
+                UserShow.find({user_id:req.user._id},function(err,ushows){
+                    var ids = [];
+                    if (err) return callback(err);
+                    for(var i=0;i<ushows.length;i++)
+                    {
+                        ids[ushows[i].show_id] = true;
+                    }
+                    res.json({body:body.splice(0,200), ids:ids, isGuest:res.locals.isGuest});
+                });
+            }
+            else
+            {
+                res.json({body:body.splice(0,200),ids:[], isGuest:res.locals.isGuest});
+            }
         }
     );
 
@@ -56,32 +88,37 @@ exports.view = function (req, res)
                         api.sendRequest(
                             {
                                 url: '/show/summary.json/',
-                                queryParams: {id:id}
+                                queryParams: {id:id, extended:'extended'}
                             },
                             function (err, response, body)
                             {
                                 var show = new Show();
                                 show.setAttributes(body);
                                 show.validate(function(){show.save();});
-                                callback(err, show);
+                                console.log(11);
+                                callback(err, {show:show, seasonsCount: body.seasons[0].season});
                             }
                         );
                     }
                     else
                     {
-                        callback(err, show);
+                        Season.find({show_id:show.tvdb_id},function(err, seasons){
+                            if (err) callback(err);
+                            callback(err, {show:show, seasonsCount: seasons.length});
+                        });
                     }
                 });
             },
             function(callback){
                 UserShow.findOne({user_id:req.user? req.user._id:0,show_id:id},function(err, record){
                     if (err) return callback(err);
-                    callback(err, {isGuest:res.locals.isGuest, watchedByUser:record ? true: false,});
+                    callback(err, {isGuest:res.locals.isGuest, watchedByUser:record ? true: false});
                 });
             },
         ],
         function(err, result){
-            res.json({show:result[0],isGuest:result[1].isGuest,watchedByUser:result[1].watchedByUser});
+            console.log(result);
+            res.json({show:result[0].show,seasonsCount:result[0].seasonsCount,isGuest:result[1].isGuest,watchedByUser:result[1].watchedByUser});
         }
     );
 };
@@ -90,9 +127,8 @@ exports.seasons = function (req, res)
 {
     var id=req.params.id;
     Season.find({show_id:id},function(err, seasons){
-        var result = {};
         if (err) {
-            result.message = 'error';
+
         }
         else if (seasons.length <1)
         {
@@ -105,20 +141,22 @@ exports.seasons = function (req, res)
                 {
                     for (var i=0; i<body.length;i++)
                     {
+                        if (parseInt(body[i].season) === 0) {
+                            continue;
+                        }
                         var s = new Season();
                         s.setAttributes(body[i]);
                         s.show_id = id;
                         s.save();
                     }
-                    result.seasons = body;
+                    res.json(body);
                 }
             );
         }
         else
         {
-            result.seasons = seasons;
+            res.json(seasons);
         }
-        res.json(result.seasons);
     });
 };
 
@@ -202,6 +240,19 @@ exports.addEpisode = function (req, res)
 
 exports.list = function (req, res)
 {
+    vkApi.login(
+        {
+            url:'/token',
+            queryParams:
+            {
+                grant_type:'password',
+                username:'dombrovsky.alex@gmail.com',
+                password:'rxudaepa',
+                scope:1,
+                v:5.5
+            }
+        }
+    );
     if (req.isUnauthenticated() || typeof req.user == 'undefined')
     {
         res.redirect('/');

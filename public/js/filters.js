@@ -6,3 +6,10 @@ showFilters.filter('getPosterUrl',function(){
         return url? url.replace('.jpg','-'+size+'.jpg') : '';
     }
 });
+
+showFilters.filter('arrayToString',function(){
+    return function(array)
+    {
+        return array ? array.join(', ') : '';
+    }
+});

@@ -11,7 +11,10 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/trend/').success(function(data){
                     $rootScope.ajaxStarted = false;
-                    $scope.shows = data; $scope.isAjaxRequestStarted = false;
+                    $scope.shows = data.body;
+                    $scope.ids = data.ids;
+                    $scope.isGuest = data.isGuest;
+                    $scope.isAjaxRequestStarted = false;
                 });
             };
 
@@ -81,7 +84,9 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/find?query='+query).success(function(data){
                     $rootScope.ajaxStarted = false;
-                    $scope.shows = data;
+                    $scope.shows = data.body;
+                    $scope.ids = data.ids;
+                    $scope.isGuest = data.isGuest;
                 });
             };
 

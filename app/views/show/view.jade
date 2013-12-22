@@ -7,9 +7,23 @@ div(ng-controller="ShowDetailsCtrl")
         h4 {{item.show.title}}
         p {{item.show.overview}}
 
-        b Год выхода:
-
+        b Дата первого выхода:
         |  {{item.show.first_aired*1000|date:'medium'}}
+        br
+        b День и время выхода:
+        |  {{item.show.air_day}} {{item.show.air_time}}
+        br
+        b Страна:
+        |  {{item.show.country}}
+        br
+        b Ссылка на Internet Movie Database(imdb.com):
+        a(href="http://www.imdb.com/title/{{item.show.imdb_id}}", target="_blank") http://www.imdb.com/title/{{item.show.imdb_id}}
+        br
+        b Жанр:
+        |  {{item.show.genres | arrayToString}}
+        br
+        b Количество сезонов:
+        |  {{item.seasonsCount}}
         br
         br
         a.pull-right.btn.ajax.btn-info(ng-click="seasonsList(item.show.tvdb_id)") Список сезонов
@@ -21,7 +35,7 @@ div(ng-controller="ShowDetailsCtrl")
             div(ng-show="item.watchedByUser")
                 a.btn.btn-danger(ng-click="removeShowFromWatch(item.show.tvdb_id)")
                     i.icon-ban-circle.icon-white
-                    | &nbsp;Я его не смотрю!
+                    | &nbsp;Я уже не смотрю!
         br
         br
         div#seasons_list.btn-group(ng-show="seasonsAreLoaded")

@@ -1,6 +1,7 @@
 var showControllers = angular.module('showControllers',[]);
 
 showControllers.controller('TrendCtrl',["$rootScope","$scope","Show",function($rootScope, $scope, Show){
+    $scope.isGuest = true;
     Show.showTrends($rootScope, $scope);
 }]);
 
@@ -82,9 +83,13 @@ showControllers.controller('LoginCtrl',["$rootScope", "$scope", "$http", "$timeo
 showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routeParams", "Show",function($rootScope, $scope, $routeParams, Show){
     $scope.seasonsAreLoaded = false;
     $scope.seasonIsLoaded = false;
+    $scope.showButton = false;
     $scope.item = {};
     $scope.byEpisodeNumber = '+episode';
-    Show.getShowDetails($rootScope, $scope, $routeParams.id);
+    if ($routeParams.id)
+    {
+        Show.getShowDetails($rootScope, $scope, $routeParams.id);
+    }
 
     $scope.seasonsList = function(id)
     {
@@ -126,6 +131,7 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
 
 showControllers.controller('FindCtrl',["$rootScope", "$scope","$location","$routeParams","$rootScope",'Show',function($rootScope, $scope, $location, $routeParams, $rootScope, Show){
     $scope.query = '';
+    $scope.isGuest = true;
     $scope.find = function()
     {
         if (this.query)

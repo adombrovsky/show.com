@@ -1,7 +1,16 @@
 ul.thumbnails(ng-controller="FindCtrl")
-    li(ng-repeat="item in shows")
-        a(ng-href="#/show/view/{{item.tvdb_id}}/", class="thumbnail")
-            img(ng-src="{{item.images.poster|getPosterUrl:300}}", style="height:290px;")
+    li(ng-repeat="show in shows")
+        a(ng-href="#/show/view/{{show.tvdb_id}}/", class="thumbnail")
+            img(ng-src="{{show.images.poster|getPosterUrl:300}}", style="height:290px;")
         .caption(style="height:50px;")
-            a(ng-href="#/show/view/{{item.tvdb_id}}/")
+            a(ng-href="#/show/view/{{show.tvdb_id}}/")
                 h5 {{item.title}}
+                div(ng-controller="ShowDetailsCtrl",ng-show="!isGuest")
+                    div(ng-show="showButton || ids[show.tvdb_id]", )
+                        a.btn.btn-danger.btn-mini(ng-click="removeShowFromWatch(show.tvdb_id); showButton = false; ids[show.tvdb_id] = false;")
+                            i.icon-ban-circle.icon-white
+                            | &nbsp;Я уже не смотрю!
+                    div(ng-show="!showButton && !ids[show.tvdb_id]")
+                        a.btn.btn-success.btn-mini(ng-click="addShowToWatch(show.tvdb_id); showButton = true;")
+                            i.icon-ok.icon-white
+                            | &nbsp;Я его смотрю!
