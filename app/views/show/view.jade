@@ -17,7 +17,7 @@ div(ng-controller="ShowDetailsCtrl")
         |  {{item.show.country}}
         br
         b Ссылка на Internet Movie Database(imdb.com):
-        a(href="http://www.imdb.com/title/{{item.show.imdb_id}}", target="_blank") http://www.imdb.com/title/{{item.show.imdb_id}}
+        a(href="http://www.imdb.com/title/{{item.show.imdb_id}}", target="_blank") see on IMDB
         br
         b Жанр:
         |  {{item.show.genres | arrayToString}}
@@ -42,6 +42,9 @@ div(ng-controller="ShowDetailsCtrl")
             a.btn.btn-info(ng-repeat="season in seasons", ng-if="season.season", ng-click="episodesList(item.show.tvdb_id,season.season)", ng-class="{active:seasonIsLoaded === season.season}") Season # {{season.season}}
         div(ng-show="seasonIsLoaded")
             br
+            a.btn.btn-success.pull-right(ng-show="!seasonIsAdded && !isGuest",ng-click="addSeasonToWatch(item_id,seasonIsLoaded)") Я посмотрел этот сезон
+            a.btn.btn-danger.pull-right(ng-show="seasonIsAdded && !isGuest",ng-click="removeSeasonFromWatch(item_id,seasonIsLoaded)") Я еще не посмотрел этот сезон
+            div.clearfix
             div.media(ng-repeat="episode in episodes|orderBy:byEpisodeNumber:reverse")
                 a.pull-left
                     img.media-object(ng-src="{{episode.images.screen}}", style="max-height:120px;")

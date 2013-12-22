@@ -49,6 +49,8 @@ showServices.factory(
                         $rootScope.ajaxStarted = false;
                         $scope['seasonIsLoaded'] = seasonId;
                         $scope.episodes = data.episodes;
+                        $scope.isGuest = data.isGuest;
+                        $scope.seasonIsAdded = data.fullSeasonAdded;
                         $scope.ids = data.ids;
                         $scope.item_id = data.item_id;
                     });
@@ -79,6 +81,24 @@ showServices.factory(
                 });
             };
 
+            showService.addSeasonToWatch = function($rootScope, $scope, showId, seasonId)
+            {
+                $rootScope.ajaxStarted = true;
+                return $http.get('/show/'+showId+'/season/'+seasonId+'/add').success(function(data){
+                    $scope.ids = data.ids;
+                    $rootScope.ajaxStarted = false;
+                });
+            };
+
+            showService.removeSeasonFromWatch = function($rootScope, $scope, showId, seasonId)
+            {
+                $rootScope.ajaxStarted = true;
+                return $http.get('/show/'+showId+'/season/'+seasonId+'/remove').success(function(data){
+                    $scope.ids = {};
+                    $rootScope.ajaxStarted = false;
+                });
+            };
+
             showService.findShow = function($rootScope, $scope, query)
             {
                 $rootScope.ajaxStarted = true;
@@ -94,6 +114,15 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/list').success(function(data){
+                    $rootScope.ajaxStarted = false;
+                    $scope.shows = data.shows;
+                });
+            };
+
+            showService.getPopularShows = function($rootScope, $scope)
+            {
+                $rootScope.ajaxStarted = true;
+                return $http.get('/show/popular').success(function(data){
                     $rootScope.ajaxStarted = false;
                     $scope.shows = data.shows;
                 });

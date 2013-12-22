@@ -6,6 +6,10 @@ showApp.config(["$routeProvider",function($routeProvider){
             templateUrl:'/views/show/trend.jade',
             controller: 'TrendCtrl'
         })
+       /* .when('/',{
+            templateUrl:'/views/main/index.jade',
+            controller: 'IndexCtrl'
+        })*/
         .when('/show/view/:id',{
             templateUrl:'/views/show/view.jade',
             controller: 'ShowDetailsCtrl'

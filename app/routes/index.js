@@ -33,11 +33,14 @@ module.exports = function (app)
 
 
     app.get('/show/list', show.list);
+//    app.get('/show/popular', show.popular);
     app.get('/show/find', show.find);
     app.get('/show/trend', show.trend);
     app.get('/show/view/:id', show.view);
     app.get('/show/:id/seasons', show.seasons);
     app.get('/show/:id/season/:season', show.episodes);
+    app.get('/show/:id/season/:season/add', show.addSeason);
+    app.get('/show/:id/season/:season/remove', show.removeSeason);
     app.get('/show/:id/season/:season/episode/:episode/add', show.addEpisode);
     app.get('/show/add/:id', show.add);
     app.get('/show/remove/:id', show.remove);

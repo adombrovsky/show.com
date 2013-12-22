@@ -95,7 +95,6 @@ exports.view = function (req, res)
                                 var show = new Show();
                                 show.setAttributes(body);
                                 show.validate(function(){show.save();});
-                                console.log(11);
                                 callback(err, {show:show, seasonsCount: body.seasons[0].season});
                             }
                         );
@@ -117,7 +116,6 @@ exports.view = function (req, res)
             },
         ],
         function(err, result){
-            console.log(result);
             res.json({show:result[0].show,seasonsCount:result[0].seasonsCount,isGuest:result[1].isGuest,watchedByUser:result[1].watchedByUser});
         }
     );
@@ -213,6 +211,7 @@ exports.episodes = function (req, res)
             res.json(
                 {
                     episodes:result[0],
+                    fullSeasonAdded: result[0].length === Object.keys(result[1]).length,
                     item_id:id,
                     season:season,
                     ids:result[1],
@@ -235,6 +234,48 @@ exports.addEpisode = function (req, res)
         returnObject.success = true;
         returnObject.episodeAdd = true;
         res.json(returnObject)
+    });
+};
+
+exports.addSeason = function (req, res)
+{
+    var data = req.params;
+
+    async.waterfall(
+        [
+            function(callback)
+            {
+                UserEpisode.remove({show_id:data.id,season:data.season, user_id:req.user._id},function(err){
+                    callback(err);
+                });
+            },
+            function(callback)
+            {
+                Episode.find({show_id:data.id,season:data.season},function(err, episodes){
+                    var ids = {};
+                    for(var i=0;i<episodes.length;i++)
+                    {
+                        var userEpisode = new UserEpisode();
+                        userEpisode.setAttributes(episodes[i]);
+                        userEpisode.user_id = req.user._id;
+                        ids[episodes[i].episode] = true;
+                        userEpisode.save();
+                    }
+                    callback(err, ids);
+                });
+            },
+        ],
+        function(err,ids){
+            res.json({message:'success',ids:ids});
+        }
+    );
+};
+
+exports.removeSeason = function (req, res)
+{
+    var data = req.params;
+    UserEpisode.remove({show_id:data.id,season:data.season, user_id:req.user._id},function(err){
+        res.json({message:err ? 'error':'success'});
     });
 };
 
@@ -292,6 +333,43 @@ exports.list = function (req, res)
         }
     );
 };
+
+/*exports.popular = function (req, res)
+{
+    async.waterfall(
+        [
+            function(callback)
+            {
+                UserShow.find({user_id:req.user._id},function(err,ushows){
+                    var ids = [];
+                    if (err) return callback(err);
+                    for(var i=0;i<ushows.length;i++)
+                    {
+                        ids.push(ushows[i].show_id);
+                    }
+                    callback(err, ids);
+                });
+            },
+            function(ids, callback)
+            {
+                if (ids.length>0)
+                {
+                    Show.find({ tvdb_id: { $in: ids } },function(err, shows){
+                        if (err) return callback(err);
+                        callback(err, shows, ids);
+                    });
+                }
+                else
+                {
+                    callback('error',[],ids);
+                }
+            },
+        ],
+        function(err,result,ids){
+            res.json({shows:result, ids:ids});
+        }
+    );
+};*/
 
 exports.add = function (req, res)
 {

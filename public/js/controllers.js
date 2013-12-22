@@ -10,6 +10,10 @@ showControllers.controller('MainCtrl',["$rootScope", "$scope","Notifications",fu
     Notifications.getNotificationCount($rootScope, $scope);
 }]);
 
+showControllers.controller('IndexCtrl',["$rootScope", "$scope", "Show",function($rootScope, $scope, Show){
+    Show.getPopularShows($rootScope, $scope);
+}]);
+
 showControllers.controller('UserShowsCtrl',["$rootScope", "$scope","Show",function($rootScope, $scope, Show){
     Show.findShowsByUser($rootScope, $scope);
 }]);
@@ -83,6 +87,7 @@ showControllers.controller('LoginCtrl',["$rootScope", "$scope", "$http", "$timeo
 showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routeParams", "Show",function($rootScope, $scope, $routeParams, Show){
     $scope.seasonsAreLoaded = false;
     $scope.seasonIsLoaded = false;
+    $scope.seasonIsAdded = false;
     $scope.showButton = false;
     $scope.item = {};
     $scope.byEpisodeNumber = '+episode';
@@ -108,12 +113,23 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
         }
     };
 
-
     $scope.addEpisodeToWatch = function(showId, seasonId, episodeId)
     {
         $scope.ids[episodeId] = true;
         Show.addEpisodeToWatch($rootScope, $scope, showId, seasonId, episodeId);
 
+    };
+
+    $scope.addSeasonToWatch = function(showId, seasonId)
+    {
+        $scope.seasonIsAdded = true;
+        Show.addSeasonToWatch($rootScope, $scope, showId, seasonId);
+    };
+
+    $scope.removeSeasonFromWatch = function(showId, seasonId)
+    {
+        $scope.seasonIsAdded = false;
+        Show.removeSeasonFromWatch($rootScope, $scope, showId, seasonId);
     };
 
     $scope.addShowToWatch = function(id)
