@@ -1,0 +1,13 @@
+.system-message
+{
+    position: fixed;
+    right: 20px;
+    bottom: 0;
+    width: 250px;
+    min-height: 100px;
+}
+
+.system-message-title
+{
+    margin: 5px;
+}

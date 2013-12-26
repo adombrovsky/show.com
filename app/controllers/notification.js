@@ -33,10 +33,15 @@ exports.setAsRead = function (req, res)
     }
 
     UserNotification.update(query,{unread:0},{multi:true},function(err,r){
+        var data = {
+            message: 'Notification is marked as read',
+            success: true
+        };
         if (err)
         {
-
+            data.success = false;
+            data.message = 'Oops! Error, you can\'t mark notification as read!';
         }
-        res.json(200, { message: 'Notification is marked as read', success:true, popup:true })
+        res.json(200, data);
     });
 };

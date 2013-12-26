@@ -4,13 +4,13 @@ ul.thumbnails(ng-controller="UserShowsCtrl")
             img(ng-src="{{show.images.poster|getPosterUrl:300}}", style="height:290px;")
         .caption(style="height:50px;")
             a(ng-href="#/show/view/{{show.tvdb_id}}/")
-                h5 {{item.title}}
+                h5 {{show.title}}
                 div(ng-controller="ShowDetailsCtrl",ng-show="!isGuest")
-                    div(ng-show="showButton", )
-                        a.btn.btn-danger.btn-mini(ng-click="removeShowFromWatch(show.tvdb_id); showButton = !showButton;")
-                            i.icon-ban-circle.icon-white
-                            | &nbsp;Я уже не смотрю!
-                    div(ng-show="!showButton")
-                        a.btn.btn-success.btn-mini(ng-click="addShowToWatch(show.tvdb_id); showButton = !showButton;")
+                    div(ng-show="!showAddToWatchButton")
+                        a.btn.btn-success.btn-mini(ng-click="addShowToWatch(show.tvdb_id)")
                             i.icon-ok.icon-white
                             | &nbsp;Я его смотрю!
+                    div(ng-show="showAddToWatchButton")
+                        a.btn.btn-danger.btn-mini(ng-click="removeShowFromWatch(show.tvdb_id)")
+                            i.icon-ban-circle.icon-white
+                            | &nbsp;Я уже не смотрю!

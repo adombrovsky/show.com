@@ -30,7 +30,6 @@ exports.index = function (req, res)
 exports.updateProfile = function (req, res)
 {
     var userData = req.body;
-    var returnObject = {};
     User.findOne({email:req.user.email, googleId:req.user.googleId},function(err, user){
         if (err)
         {
@@ -47,10 +46,17 @@ exports.updateProfile = function (req, res)
         {
             user.password = user.encryptPassword(userData.password);
         }
-        user.save();
-        returnObject.success = true;
-        returnObject.action = 'reload';
-        res.json(returnObject);
+        user.save(function(err){
+            var returnObject = {};
+            returnObject.success = true;
+            returnObject.message = 'Profile was updated successfully!';
+            if (err)
+            {
+                returnObject.success = false;
+                returnObject.message = 'Oops. Error! Profile was not updated successfully!';
+            }
+            res.json(returnObject);
+        });
     });
 
 };
@@ -58,11 +64,6 @@ exports.updateProfile = function (req, res)
 exports.settings = function (req, res)
 {
     User.findOne({email:req.user.email},function(err, settings){
-        if (err)
-        {
-
-        }
-
         res.json(settings);
     });
 };
@@ -70,19 +71,22 @@ exports.settings = function (req, res)
 exports.updateSettings = function (req, res)
 {
     var userSettings = req.body;
-    var returnObject = {};
     User.findOne({email:req.user.email},function(err, record){
-        if (err){}
         if (!record){}
 
         record.email_notifier = userSettings.email_notifier ? 1:0;
         record.vk_notifier = userSettings.vk_notifier ? 1:0;
         record.phone_notifier = userSettings.phone_notifier ? 1:0;
-        record.save();
-        returnObject.success = true;
-        returnObject.popup = true;
-        returnObject.title = 'Save notification settings';
-        returnObject.message = 'Data is updated!';
-        res.json(returnObject);
+        record.save(function(){
+            var returnObject = {};
+            returnObject.success = true;
+            returnObject.message = 'User settings were updated successfully!';
+            if (err)
+            {
+                returnObject.success = false;
+                returnObject.message = 'Oops. Error! User settings were not updated successfully!';
+            }
+            res.json(returnObject);
+        });
     });
 };

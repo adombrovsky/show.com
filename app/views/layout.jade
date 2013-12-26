@@ -3,6 +3,7 @@ html(ng-app="showApp")
     head
         title Shows
         link(href="/css/bootstrap.css", media="all", rel="stylesheet", type="text/css")
+        link(href="/css/styles.css", media="all", rel="stylesheet", type="text/css")
         script(src="/js/jquery-1.8.2.min.js")
         script(src="/js/angular.js")
         script(src="/js/controllers.js")
@@ -44,8 +45,9 @@ html(ng-app="showApp")
                         .input-append.span5
                             input.span15(type="text", ng-model="query", ng-required="true", ng-minlength=3)
                             button.btn(type="submit") Search
-                        img.offset1#loader(src="/img/257.gif", style="width:30px", ng-show="ajaxStarted")
+                        img.offset1#loader(src="/img/257.gif", style="width:30px",ng-controller="AjaxHandlerCtrl", ng-show="ajaxStarted")
                         div.clearfix
                     div(ng-view)
+        include includes/system_message_popup.jade
         #footer
         input#isGuest(type="hidden", value="#{isGuest}")

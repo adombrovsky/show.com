@@ -233,6 +233,13 @@ exports.addEpisode = function (req, res)
         var returnObject = {};
         returnObject.success = true;
         returnObject.episodeAdd = true;
+        returnObject.message = 'Episode was added successfully!';
+        if (err)
+        {
+            returnObject.success = false;
+            returnObject.episodeAdd = false;
+            returnObject.message = 'Oops. Error! Episode was not added successfully!';
+        }
         res.json(returnObject)
     });
 };
@@ -266,7 +273,16 @@ exports.addSeason = function (req, res)
             },
         ],
         function(err,ids){
-            res.json({message:'success',ids:ids});
+            var returnObject = {};
+            returnObject.success = true;
+            returnObject.ids = ids;
+            returnObject.message = 'Season was added successfully!';
+            if (err)
+            {
+                returnObject.success = false;
+                returnObject.message = 'Oops. Error! Season was not added successfully!';
+            }
+            res.json(returnObject);
         }
     );
 };
@@ -275,13 +291,21 @@ exports.removeSeason = function (req, res)
 {
     var data = req.params;
     UserEpisode.remove({show_id:data.id,season:data.season, user_id:req.user._id},function(err){
-        res.json({message:err ? 'error':'success'});
+        var returnObject = {};
+        returnObject.success = true;
+        returnObject.message = 'Season was removed successfully!';
+        if (err)
+        {
+            returnObject.success = false;
+            returnObject.message = 'Oops. Error! Season was not removed successfully!';
+        }
+        res.json(returnObject);
     });
 };
 
 exports.list = function (req, res)
 {
-    vkApi.login(
+    /*vkApi.login(
         {
             url:'/token',
             queryParams:
@@ -293,7 +317,7 @@ exports.list = function (req, res)
                 v:5.5
             }
         }
-    );
+    );*/
     if (req.isUnauthenticated() || typeof req.user == 'undefined')
     {
         res.redirect('/');
@@ -308,7 +332,7 @@ exports.list = function (req, res)
                     if (err) return callback(err);
                     for(var i=0;i<ushows.length;i++)
                     {
-                        ids.push(ushows[i].show_id);
+                        ids[ushows[i].show_id] = true;
                     }
                     callback(err, ids);
                 });
@@ -317,7 +341,7 @@ exports.list = function (req, res)
             {
                 if (ids.length>0)
                 {
-                    Show.find({ tvdb_id: { $in: ids } },function(err, shows){
+                    Show.find({ tvdb_id: { $in: Object.keys(ids) } },function(err, shows){
                         if (err) return callback(err);
                         callback(err, shows, ids);
                     });
@@ -416,17 +440,17 @@ exports.add = function (req, res)
                             userShow.save();
                         }
                     });
-                    callback(null,'show is added successfully');
+                    callback(null,'Show is added to your list successfully');
                 }
                 else
                 {
-                    callback('error','show is already added');
+                    callback('error','Show is already added');
                 }
             },
         ],
         function(err,result){
             var returnObject = {};
-            returnObject.success = true;
+            returnObject.success = err === null;
             returnObject.message = result;
             res.json(returnObject);
         }
@@ -437,9 +461,14 @@ exports.remove = function (req, res)
 {
     var data = req.params;
     UserShow.remove({show_id:data.id},function(err){
-        if (err) {}
         var returnObject = {};
         returnObject.success = true;
+        returnObject.message = 'Show was removed from your <a href="#/show/list">list</a> successfully!';
+        if (err)
+        {
+            returnObject.success = false;
+            returnObject.message = 'Oops. Error! Show was not removed successfully!';
+        }
         res.json(returnObject);
     });
 };

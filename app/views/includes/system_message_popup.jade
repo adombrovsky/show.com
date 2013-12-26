@@ -1,7 +1,4 @@
-#system-message.modal.hide.fade
-    .modal-header
-        button(type="button", class="close", data-dismiss="modal", aria-hidden="true" ) &times;
-        h3#modal-title  System Message
-    .modal-body
-    .modal-footer
-        a(href="#", class="btn", data-dismiss="modal") Close
+div.alert.system-message(ng-controller="AjaxHandlerCtrl", ng-show="showWindow", ng-class="{'alert-success':messageType, 'alert-error':!messageType}")
+    button.close(ng-click="showWindow = false;") &times;
+    h5.system-message-title {{title}}
+    div(ng-bind-html="message")

@@ -10,49 +10,48 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/trend/').success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
                     $scope.isGuest = data.isGuest;
-                    $scope.isAjaxRequestStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
-            showService.getShowDetails = function($rootScope, $scope,showId)
+            showService.getShowDetails = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/view/'+showId).success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.item = data;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
-            showService.getSeasonsList = function($rootScope, $scope,showId)
+            showService.getSeasonsList = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
                 return $http
                     .get('/show/'+showId+'/seasons/')
                     .success(function(data){
-                        $rootScope.ajaxStarted = false;
                         $scope.seasonsAreLoaded = true;
                         $scope.seasons = data;
+                        $rootScope.$broadcast('ajaxResponseEvent',data);
 
                     });
             };
 
-            showService.getEpisodesList = function($rootScope, $scope,showId, seasonId)
+            showService.getEpisodesList = function($rootScope, $scope, showId, seasonId)
             {
                 $rootScope.ajaxStarted = true;
                 return $http
                     .get('/show/'+showId+'/season/'+seasonId+'/')
                     .success(function(data){
-                        $rootScope.ajaxStarted = false;
                         $scope['seasonIsLoaded'] = seasonId;
                         $scope.episodes = data.episodes;
                         $scope.isGuest = data.isGuest;
                         $scope.seasonIsAdded = data.fullSeasonAdded;
                         $scope.ids = data.ids;
                         $scope.item_id = data.item_id;
+                        $rootScope.$broadcast('ajaxResponseEvent',data);
                     });
             };
 
@@ -60,7 +59,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/add/'+showId).success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
 
                 });
             };
@@ -69,7 +68,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/remove/'+showId).success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -77,7 +76,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/episode/'+episodeId+'/add').success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -86,7 +85,7 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/add').success(function(data){
                     $scope.ids = data.ids;
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -95,7 +94,7 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/remove').success(function(data){
                     $scope.ids = {};
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -103,10 +102,10 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/find?query='+query).success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
                     $scope.isGuest = data.isGuest;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -114,8 +113,8 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/list').success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.shows = data.shows;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -123,8 +122,8 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/show/popular').success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.shows = data.shows;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
             return showService;
@@ -143,9 +142,9 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/user/').success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.user = data;
                     $scope.user.password = '';
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -153,8 +152,8 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.get('/user/settings/').success(function(data){
-                    $rootScope.ajaxStarted = false;
                     $scope.userSettings = data;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -162,7 +161,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.post('/user/save/',userData).success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
 
                 });
             };
@@ -171,7 +170,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 return $http.post('/user/settings/save/',userSettings).success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
 
@@ -180,7 +179,7 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/notification/').success(function(data){
                     $scope.notifications = data;
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
             return userService;
@@ -198,7 +197,7 @@ showServices.factory(
                 $rootScope.ajaxStarted = true;
                 return $http.get('/notification/').success(function(data){
                     $scope.notifications = data;
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
             notificationsService.markNotificationAsRead = function($rootScope, $scope, id)
@@ -210,13 +209,14 @@ showServices.factory(
                     dataToSend.id = id;
                 }
                 return $http.post('/notification/markAsRead/',dataToSend).success(function(data){
-                    $rootScope.ajaxStarted = false;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
             notificationsService.getNotificationCount = function($rootScope, $scope)
             {
                 return $http.post('/notification/count').success(function(data){
                     $scope.notificationCount = data.n_count;
+                    $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
             return notificationsService;

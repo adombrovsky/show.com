@@ -1,0 +1,9 @@
+div(ng-controller="ShowDetailsCtrl",ng-show="!isGuest")
+    div(ng-show="addShowToWatchButton(ids, show.tvdb_id, showAddToWatchButton)")
+        a.btn.btn-success.btn-mini(ng-click="addShowToWatch(show.tvdb_id)")
+            i.icon-ok.icon-white
+            | &nbsp;Я его смотрю!
+    div(ng-show="!addShowToWatchButton(ids, show.tvdb_id, showAddToWatchButton)")
+        a.btn.btn-danger.btn-mini(ng-click="removeShowFromWatch(show.tvdb_id)")
+            i.icon-ban-circle.icon-white
+            | &nbsp;Я уже не смотрю!

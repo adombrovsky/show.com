@@ -14,19 +14,23 @@ showControllers.controller('IndexCtrl',["$rootScope", "$scope", "Show",function(
     Show.getPopularShows($rootScope, $scope);
 }]);
 
-showControllers.controller('UserShowsCtrl',["$rootScope", "$scope","Show",function($rootScope, $scope, Show){
+showControllers.controller('UserShowsCtrl',["$rootScope","$location", "$scope","Show",function($rootScope, $location, $scope, Show){
+    $scope.showAddToWatchButton = false;
     Show.findShowsByUser($rootScope, $scope);
 }]);
 
 showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notifications", "$sce", "$route",function($rootScope, $scope, Notifications, $sce, $route){
     $scope.notifications = {};
     Notifications.getUserNotifications($rootScope, $scope);
+    $scope.hideMarkedNotification = false;
 
     $scope.markNotificationAsRead = function(id)
     {
         Notifications.markNotificationAsRead($rootScope, $scope, id);
-        $route.reload();
-
+        if (!id)
+        {
+            $route.reload();
+        }
     };
 
     $scope.getNotificationId = function(object)
@@ -68,6 +72,32 @@ showControllers.controller('ModalCtrl',["$rootScope", "$scope","$modal",function
     };
 }]);
 
+showControllers.controller('AjaxHandlerCtrl',["$rootScope", "$scope", '$timeout', '$sce',function($rootScope, $scope, $timeout, $sce){
+    $scope.message = '';
+    $scope.title = '';
+    $scope.showWindow = false;
+    $rootScope.ajaxStarted = false;
+    $scope.messageType = 'success';
+
+    $scope.showMessage = function(message, messageType)
+    {
+        $scope.showWindow = false;
+        $scope.message = $sce.trustAsHtml(message);
+        $scope.title = 'System Notification';
+        $scope.showWindow = true;
+        $scope.messageType = messageType !== false;
+//        $timeout(function(){$scope.showWindow = false},2000);
+    };
+
+    $scope.$on('ajaxResponseEvent',function(event, data){
+        $rootScope.ajaxStarted = false;
+        if (data.message)
+        {
+            $scope.showMessage(data.message, data.success);
+        }
+    });
+}]);
+
 showControllers.controller('ModalInstanceCtrl',["$rootScope", "$scope", "$modalInstance",function($rootScope, $scope, $modalInstance){
     $scope.close = function ()
     {
@@ -88,7 +118,7 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
     $scope.seasonsAreLoaded = false;
     $scope.seasonIsLoaded = false;
     $scope.seasonIsAdded = false;
-    $scope.showButton = false;
+    $scope.showAddToWatchButton = true;
     $scope.item = {};
     $scope.byEpisodeNumber = '+episode';
     if ($routeParams.id)
@@ -134,15 +164,29 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
 
     $scope.addShowToWatch = function(id)
     {
+        $scope.showAddToWatchButton = !$scope.showAddToWatchButton;
         $scope.item.watchedByUser = true;
         Show.addShowToWatch($rootScope, $scope, id);
     };
 
     $scope.removeShowFromWatch = function(id)
     {
+        $scope.showAddToWatchButton = !$scope.showAddToWatchButton;
         $scope.item.watchedByUser = false;
         Show.removeShowFromWatch($rootScope, $scope, id);
-    }
+    };
+
+    $scope.addShowToWatchButton = function (ids, show_id, showAddToWatchButton)
+    {
+        if (ids && ids[show_id])
+        {
+            return !showAddToWatchButton;
+        }
+        else
+        {
+            return showAddToWatchButton;
+        }
+    };
 }]);
 
 showControllers.controller('FindCtrl',["$rootScope", "$scope","$location","$routeParams","$rootScope",'Show',function($rootScope, $scope, $location, $routeParams, $rootScope, Show){
