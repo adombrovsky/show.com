@@ -7,6 +7,11 @@ exports.index = function (req, res)
     res.render('main/index');
 };
 
+exports.about = function (req, res)
+{
+    res.render('main/about');
+};
+
 exports.partials = function(req, res)
 {
     res.render(req.params.folder+'/'+req.params.name);

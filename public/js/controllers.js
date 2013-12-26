@@ -9,6 +9,8 @@ showControllers.controller('MainCtrl',["$rootScope", "$scope","Notifications",fu
     $scope.notificationCount = -1;
     Notifications.getNotificationCount($rootScope, $scope);
 }]);
+showControllers.controller('AboutCtrl',["$rootScope", "$scope",function($rootScope, $scope){
+}]);
 
 showControllers.controller('IndexCtrl',["$rootScope", "$scope", "Show",function($rootScope, $scope, Show){
     Show.getPopularShows($rootScope, $scope);

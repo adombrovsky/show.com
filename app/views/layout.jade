@@ -18,6 +18,7 @@ html(ng-app="showApp")
         .navbar.inverse.navbar-inverse
             .navbar-inner
                 a.brand(href='/') Shows
+                a.brand(href='#/about/') About
                 if (isGuest)
                     a.brand.login-form(ng-href='/login/google/') Login via Google
                 else
