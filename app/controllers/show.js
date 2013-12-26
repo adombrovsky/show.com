@@ -440,7 +440,7 @@ exports.add = function (req, res)
                             userShow.save();
                         }
                     });
-                    callback(null,'Show is added to your list successfully');
+                    callback(null,'Show is added to your <a href="#/show/list">list</a> successfully');
                 }
                 else
                 {
