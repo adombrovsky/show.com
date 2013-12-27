@@ -19,7 +19,6 @@ html(ng-app="showApp")
             .navbar-inner
                 a.brand(href='/') Shows
                 a.brand(href='#/about/') About
-                a.brand(href='#/contacts/') Contact us
                 if (isGuest)
                     a.brand.login-form(ng-href='/login/google/') Login via Google
                 else
