@@ -24,6 +24,7 @@ module.exports = function (app)
     app.all('*', checkUserAuthentication);
     app.get('/', main.index);
     app.get('/about', main.about);
+    app.post('/contact', main.contactForm);
     app.post('/login',main.loginLocal);
     app.get('/logout',main.logout);
 //    app.get('/partials/:name',main.partials);

@@ -19,6 +19,7 @@ html(ng-app="showApp")
             .navbar-inner
                 a.brand(href='/') Shows
                 a.brand(href='#/about/') About
+                a.brand(href='#/contacts/') Contact us
                 if (isGuest)
                     a.brand.login-form(ng-href='/login/google/') Login via Google
                 else
@@ -31,9 +32,9 @@ html(ng-app="showApp")
                         li
                             a(href="{{'#/show/trend/'}}") Trending Shows
                         if (!isGuest)
-                            li#notification_count(ng-controller="MainCtrl")
+                            li#notification_count(ng-controller="NotificationCtrl")
                                 a(href="#/notification/") My notifications &nbsp;
-                                        span.badge.badge-success(ng-hide="notificationCount < 0") {{notificationCount}}
+                                        span.badge.badge-success(ng-hide="notificationCount < 0", ng-init="getNotificationCount()") {{notificationCount}}
                             li
                                 a(href="#/show/list/") View my shows list
                             li

@@ -17,15 +17,15 @@ showApp.config(["$routeProvider",function($routeProvider){
             templateUrl:'/views/show/view.jade',
             controller: 'ShowDetailsCtrl'
         })
-        .when('/show/list/',{
+        .when('/show/list',{
             templateUrl:'/views/show/list.jade',
             controller: 'UserShowsCtrl'
         })
-        .when('/user/',{
+        .when('/user',{
             templateUrl:'/views/user/profile.jade',
             controller: 'UserProfileCtrl'
         })
-        .when('/notification/',{
+        .when('/notification',{
             templateUrl:'/views/notification/index.jade',
             controller: 'NotificationCtrl'
         })

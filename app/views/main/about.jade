@@ -7,3 +7,28 @@ p   Hi! If you are at first time here, i think you must read this to know how to
     | You can see the seasons list of each show and also episodes list of each season.
     | To ease show's tracking proccess services gives you a feature to mark each episode as watched.
     | If you want to reveice email notification about new episode comming, you must check proper notification type in "User settings" page.
+
+hr
+h3 Report a bug
+div
+    form.form-horizontal(ng-submit="sendMessage()", ng-controller="AboutCtrl", name="contactForm")
+        div.control-group
+            label.control-label(for="username") Your name
+            div.controls
+                input(type="text", name="username", id="username", ng-required="true", ng-model="formData.username")
+        div.control-group
+            label.control-label(for="username") Question type
+            div.controls
+                select(name="message_type", ng-required="true", ng-model="formData.message_type")
+                    option(value="") Please, select message type
+                    option(value="simple_message") Contact message
+                    option(value="bug_report") I've foud a bug
+                    option(value="idea") I have an idea
+                    option(value="suggestion") I have a suggestion
+        div.control-group
+            label.control-label(for="text") Message
+            div.controls
+                textarea.span5(rows="8", name="text", id="text", ng-required="true", ng-model="formData.text")
+        div.control-group
+            div.controls
+                button.btn.btn-success.span3(type="submit") Send message

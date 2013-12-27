@@ -6,10 +6,18 @@ showControllers.controller('TrendCtrl',["$rootScope","$scope","Show",function($r
 }]);
 
 showControllers.controller('MainCtrl',["$rootScope", "$scope","Notifications",function($rootScope, $scope, Notifications){
-    $scope.notificationCount = -1;
-    Notifications.getNotificationCount($rootScope, $scope);
 }]);
-showControllers.controller('AboutCtrl',["$rootScope", "$scope",function($rootScope, $scope){
+
+showControllers.controller('AboutCtrl',["$rootScope", "$scope", "$http",function($rootScope, $scope, $http){
+    $scope.formData = {};
+    $scope.sendMessage = function()
+    {
+        $rootScope.ajaxStarted = true;
+        $http.post('/contact',$scope.formData).success(function(data){
+            $rootScope.$broadcast('ajaxResponseEvent',data);
+            $scope.formData = {};
+        });
+    }
 }]);
 
 showControllers.controller('IndexCtrl',["$rootScope", "$scope", "Show",function($rootScope, $scope, Show){
@@ -21,10 +29,19 @@ showControllers.controller('UserShowsCtrl',["$rootScope","$location", "$scope","
     Show.findShowsByUser($rootScope, $scope);
 }]);
 
-showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notifications", "$sce", "$route",function($rootScope, $scope, Notifications, $sce, $route){
+showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notifications", "$sce", "$route", "$location",function($rootScope, $scope, Notifications, $sce, $route, $location){
     $scope.notifications = {};
-    Notifications.getUserNotifications($rootScope, $scope);
+    $scope.notificationCount = -1;
+    if ($location.path() === '/notification')
+    {
+        Notifications.getUserNotifications($rootScope, $scope);
+    }
     $scope.hideMarkedNotification = false;
+
+    $scope.getNotificationCount = function()
+    {
+        Notifications.getNotificationCount($rootScope, $scope);
+    };
 
     $scope.markNotificationAsRead = function(id)
     {
@@ -44,24 +61,6 @@ showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notificat
     {
         return $sce.trustAsHtml(object.text);
     };
-}]);
-
-showControllers.controller('UserProfileCtrl',["$rootScope", "$scope", "User",function($rootScope, $scope, User){
-    $scope.user = {};
-    User.getUserInfo($rootScope, $scope);
-    $scope.saveUserInfo = function()
-    {
-        User.updateUserInfo($rootScope, $scope.user)
-    }
-}]);
-
-showControllers.controller('UserSettingsCtrl',["$rootScope", "$scope", "User",function($rootScope, $scope, User){
-    $scope.userSettings = {};
-    User.getUserSettings($rootScope, $scope);
-    $scope.saveUserSettings = function()
-    {
-        User.updateUserSettings($rootScope, $scope.userSettings);
-    }
 }]);
 
 showControllers.controller('ModalCtrl',["$rootScope", "$scope","$modal",function($rootScope, $scope, $modal){
@@ -204,5 +203,23 @@ showControllers.controller('FindCtrl',["$rootScope", "$scope","$location","$rout
     if ($routeParams.query)
     {
         Show.findShow($rootScope, $scope,$routeParams.query);
+    }
+}]);
+
+showControllers.controller('UserProfileCtrl',["$rootScope", "$scope", "User",function($rootScope, $scope, User){
+    $scope.user = {};
+    User.getUserInfo($rootScope, $scope);
+    $scope.saveUserInfo = function()
+    {
+        User.updateUserInfo($rootScope, $scope.user)
+    }
+}]);
+
+showControllers.controller('UserSettingsCtrl',["$rootScope", "$scope", "User",function($rootScope, $scope, User){
+    $scope.userSettings = {};
+    User.getUserSettings($rootScope, $scope);
+    $scope.saveUserSettings = function()
+    {
+        User.updateUserSettings($rootScope, $scope.userSettings);
     }
 }]);

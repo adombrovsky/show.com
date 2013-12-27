@@ -1,6 +1,8 @@
 var User = require('../models/User');
 var Show = require('../models/Show');
 var passport = require('passport');
+var cfg = require('../config');
+var config = cfg.loadConfig(cfg.appConfig);
 
 exports.index = function (req, res)
 {
@@ -10,6 +12,27 @@ exports.index = function (req, res)
 exports.about = function (req, res)
 {
     res.render('main/about');
+};
+
+exports.contactForm = function (req, res)
+{
+    var returnObject = {};
+    var formData = req.body;
+    res.app.mailer.send('email/contact_form', {
+        from:'no-reply@show.com',
+        to: config.mailer.from, // REQUIRED. This can be a comma delimited string just like a normal email to field.
+        subject: formData.message_type, // REQUIRED.
+        message: formData.text, // REQUIRED.
+        username: formData.username // REQUIRED.
+    }, function (err) {
+        returnObject.success = true;
+        returnObject.message = 'Message successfully sent!';
+        if (err) {
+            returnObject.success = false;
+            returnObject.message = 'Oops. Error! You can\'t send this message! Somethis goes wrong!';
+        }
+        res.json(returnObject);
+    });
 };
 
 exports.partials = function(req, res)
