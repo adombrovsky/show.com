@@ -85,8 +85,8 @@ showControllers.controller('AjaxHandlerCtrl',["$rootScope", "$scope", '$timeout'
         $scope.showWindow = false;
         $scope.message = $sce.trustAsHtml(message);
         $scope.title = 'System Notification';
-        $scope.showWindow = true;
         $scope.messageType = messageType !== false;
+        $scope.showWindow = true;
 //        $timeout(function(){$scope.showWindow = false},2000);
     };
 

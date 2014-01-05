@@ -1,6 +1,6 @@
 div(ng-controller="NotificationCtrl")
     h2 Notification list
         button.pull-right.btn.btn-primary.set-as-read(ng-click="markNotificationAsRead()") Mark all as read
-    .alert.alert-block.alert-success.fade.in(ng-repeat="notification in notifications", ng-hide="hideMarkedNotification")
+    .alert.alert-block.alert-success.animate-notification-repeat(ng-repeat="notification in notifications", ng-hide="hideMarkedNotification")
         a.close.set-as-read(type="button", ng-click="markNotificationAsRead(getNotificationId(notification)); hideMarkedNotification = !hideMarkedNotification;") &times;
         div(ng-bind-html="getNotificationText(notification)")

@@ -1,4 +1,5 @@
-div.alert.system-message(ng-controller="AjaxHandlerCtrl", ng-show="showWindow", ng-class="{'alert-success':messageType, 'alert-error':!messageType}")
-    button.close(ng-click="showWindow = false;") &times;
-    h5.system-message-title {{title}}
-    div(ng-bind-html="message")
+div.animate-show(ng-controller="AjaxHandlerCtrl", ng-show="showWindow")
+    div.alert.system-message(ng-class="{'alert-success':messageType, 'alert-error':!messageType}")
+        button.close(ng-click="showWindow = false;") &times;
+        h5.system-message-title {{title}}
+        div(ng-bind-html="message")

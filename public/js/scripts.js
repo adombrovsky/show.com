@@ -1,4 +1,4 @@
-var showApp = angular.module('showApp',['ngRoute','showControllers', 'showServices', 'showDirectives', 'showFilters','ui.bootstrap']);
+var showApp = angular.module('showApp',['ngRoute','showControllers', 'showServices', 'showDirectives', 'showFilters','ui.bootstrap', 'ngAnimate']);
 
 showApp.config(["$routeProvider",function($routeProvider){
     $routeProvider

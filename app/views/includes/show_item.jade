@@ -1,7 +1,7 @@
-li(ng-repeat="show in shows")
+li.animate-items-repeat(ng-repeat="show in shows")
     a(ng-href="#/show/view/{{show.tvdb_id}}/", class="thumbnail")
         img(ng-src="{{show.images.poster|getPosterUrl:300}}", style="height:290px;")
-    .caption(style="height:50px;")
+    .caption
         a(ng-href="#/show/view/{{show.tvdb_id}}/")
             h5 {{show.title}}
             include ../includes/buttons.jade

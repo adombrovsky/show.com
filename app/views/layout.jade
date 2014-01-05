@@ -6,6 +6,7 @@ html(ng-app="showApp")
         link(href="/css/styles.css", media="all", rel="stylesheet", type="text/css")
         script(src="/js/jquery-1.8.2.min.js")
         script(src="/js/angular.js")
+        script(src="/js/angular-animate.js")
         script(src="/js/controllers.js")
         script(src="/js/services.js")
         script(src="/js/filters.js")
@@ -44,9 +45,9 @@ html(ng-app="showApp")
                 .span7
                     form(ng-submit="find()",novalidate="true", ng-controller="FindCtrl")
                         .input-append.span5
-                            input.span15(type="text", ng-model="query", ng-required="true", ng-minlength=3)
+                            input(type="text", ng-model="query", ng-required="true", ng-minlength=3, style="width:340px;")
                             button.btn(type="submit") Search
-                        img.offset1#loader(src="/img/257.gif", style="width:30px",ng-controller="AjaxHandlerCtrl", ng-show="ajaxStarted")
+                        img.animate-show#loader(src="/img/257.gif", style="width:30px",ng-controller="AjaxHandlerCtrl", ng-show="ajaxStarted")
                         div.clearfix
                     div(ng-view)
         include includes/system_message_popup.jade
