@@ -7,10 +7,10 @@ ul.thumbnails(ng-controller="UserShowsCtrl")
                 h5 {{show.title}}
                 div(ng-controller="ShowDetailsCtrl",ng-show="!isGuest")
                     div(ng-show="!showAddToWatchButton")
-                        a.btn.btn-success.btn-mini(ng-click="addShowToWatch(show.tvdb_id)")
+                        a.btn.btn-success.btn-mini.btn-sm(ng-click="addShowToWatch(show.tvdb_id)")
                             i.icon-ok.icon-white
-                            | &nbsp;Я его смотрю!
+                            | &nbsp;I'm watching!
                     div(ng-show="showAddToWatchButton")
-                        a.btn.btn-danger.btn-mini(ng-click="removeShowFromWatch(show.tvdb_id)")
+                        a.btn.btn-danger.btn-mini.btn-sm(ng-click="removeShowFromWatch(show.tvdb_id)")
                             i.icon-ban-circle.icon-white
-                            | &nbsp;Я уже не смотрю!
+                            | &nbsp;I'm not watching

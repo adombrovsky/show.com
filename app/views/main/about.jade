@@ -12,23 +12,23 @@ hr
 h3 Send message
 div
     form.form-horizontal(ng-submit="sendMessage()", ng-controller="AboutCtrl", name="contactForm")
-        div.control-group
+        div.form-group
             label.control-label(for="username") Your name
-            div.controls
-                input(type="text", name="username", id="username", ng-required="true", ng-model="formData.username")
-        div.control-group
+            div.col-lg-5
+                input.form-control(type="text", name="username", id="username", ng-required="true", ng-model="formData.username")
+        div.form-group
             label.control-label(for="username") Question type
-            div.controls
-                select(name="message_type", ng-required="true", ng-model="formData.message_type")
+            div.col-lg-5
+                select.form-control(name="message_type", ng-required="true", ng-model="formData.message_type")
                     option(value="") Please, select message type
                     option(value="simple_message") Contact message
                     option(value="bug_report") I've foud a bug
                     option(value="idea") I have an idea
                     option(value="suggestion") I have a suggestion
-        div.control-group
+        div.form-group
             label.control-label(for="text") Message
-            div.controls
-                textarea.span5(rows="8", name="text", id="text", ng-required="true", ng-model="formData.text")
-        div.control-group
-            div.controls
-                button.btn.btn-success.span3(type="submit") Send message
+            div.col-lg-5
+                textarea.form-control(rows="8", name="text", id="text", ng-required="true", ng-model="formData.text")
+        div.form-group
+            div.col-lg-5
+                button.btn.btn-success(type="submit") Send message

@@ -7,57 +7,57 @@ div(ng-controller="ShowDetailsCtrl")
         h4 {{item.show.title}}
         p {{item.show.overview}}
 
-        b Дата первого выхода:
+        b First air date:
         |  {{item.show.first_aired*1000|date:'medium'}}
         br
-        b День и время выхода:
+        b Air date and time:
         |  {{item.show.air_day}} {{item.show.air_time}}
         br
-        b Страна:
+        b Country:
         |  {{item.show.country}}
         br
-        b Ссылка на Internet Movie Database(imdb.com):
+        b Link to Internet Movie Database(imdb.com):
         a(href="http://www.imdb.com/title/{{item.show.imdb_id}}", target="_blank") see on IMDB
         br
-        b Жанр:
+        b Genre:
         |  {{item.show.genres | arrayToString}}
         br
-        b Количество сезонов:
+        b Seasons count:
         |  {{item.seasonsCount}}
         br
         br
-        a.pull-right.btn.ajax.btn-info(ng-click="seasonsList(item.show.tvdb_id)") Список сезонов
+        a.pull-right.btn.ajax.btn-info(ng-click="seasonsList(item.show.tvdb_id)") Episodes list
         div(ng-show="!item.isGuest")
             div(ng-show="!item.watchedByUser")
                 a.btn.btn-success(ng-click="addShowToWatch(item.show.tvdb_id)")
                     i.icon-ok.icon-white
-                    | &nbsp;Я его смотрю!
+                    | &nbsp;I'm watching
             div(ng-show="item.watchedByUser")
                 a.btn.btn-danger(ng-click="removeShowFromWatch(item.show.tvdb_id)")
                     i.icon-ban-circle.icon-white
-                    | &nbsp;Я уже не смотрю!
+                    | &nbsp;I'm not watching
         br
         br
         div#seasons_list.btn-group(ng-show="seasonsAreLoaded")
-            a.btn.btn-info(ng-repeat="season in seasons", ng-if="season.season", ng-click="episodesList(item.show.tvdb_id,season.season)", ng-class="{active:seasonIsLoaded === season.season}") Season # {{season.season}}
+            a.btn.btn-info(ng-repeat="season in seasons|orderBy:bySeasonNumber", ng-if="season.season", ng-click="episodesList(item.show.tvdb_id,season.season)", ng-class="{active:seasonIsLoaded === season.season}") Season # {{season.season}}
         div(ng-show="seasonIsLoaded")
             br
-            a.btn.btn-success.pull-right(ng-show="!seasonIsAdded && !isGuest",ng-click="addSeasonToWatch(item_id,seasonIsLoaded)") Я посмотрел этот сезон
-            a.btn.btn-danger.pull-right(ng-show="seasonIsAdded && !isGuest",ng-click="removeSeasonFromWatch(item_id,seasonIsLoaded)") Я еще не посмотрел этот сезон
+            a.btn.btn-success.pull-right(ng-show="!seasonIsAdded && !isGuest",ng-click="addSeasonToWatch(item_id,seasonIsLoaded)") I've watched this season
+            a.btn.btn-danger.pull-right(ng-show="seasonIsAdded && !isGuest",ng-click="removeSeasonFromWatch(item_id,seasonIsLoaded)") I've not watched this season
             div.clearfix
-            div.media.animate-items-repeat(ng-repeat="episode in episodes|orderBy:byEpisodeNumber:reverse")
+            div.media.animate-items-repeat(ng-repeat="episode in episodes|orderBy:byEpisodeNumber")
                 a.pull-left
                     img.media-object(ng-src="{{episode.images.screen}}", style="max-height:120px;")
                 div.media-body
                     h4.media-heading # {{episode.episode}} . {{episode.title}}
                     b
-                        span.text-right {{episode.first_aired_utc*1000|date:'medium'}}
+                        span.text-right(ng-if="episode.first_aired_utc") {{episode.first_aired_utc*1000|date:'medium'}}
                     p  {{episode.overview}}
                     div(ng-show="!item.isGuest")
                         div(ng-if="!ids[episode.episode]")
-                            a.btn.btn-primary(ng-click="addEpisodeToWatch(item_id,episode.season,episode.episode)") Посмотрел
+                            a.btn.btn-primary(ng-click="addEpisodeToWatch(item_id,episode.season,episode.episode)") Watched
                         div(ng-if="ids[episode.episode]")
-                            a.btn.disabled.btn-success Уже Посмотрел
+                            a.btn.disabled.btn-success Watched
 
                 hr
         br

@@ -1,21 +1,21 @@
 form(ng-controller="UserSettingsCtrl", ng-submit="saveUserSettings()")
     fieldset
         legend Настройки сервиса
-        div.control-group
-            div.controls
+        div.form-group
+            div.checkbox
                 label.checkbox.control-label(for="email_notifier")
                     span.tooltip-info.tr(tooltip-placement="right", tooltip="На почту, которая указана при регистрации будет отправленно оповещение о выходе новой серии") Оповещение по почте
                         input(type="checkbox", ng-checked="userSettings.email_notifier", ng-model="userSettings.email_notifier", id="email_notifier", value="1")
-        div.control-group
-            div.controls
+        div.form-group
+            div.checkbox
                 label.checkbox.control-label(for="vk_notifier")
                     span.tooltip-info.tr(tooltip-placement="right", tooltip="На Ваш аккаунт в соц. сеть vk.com будет отправленно оповещение о выходе новой серии") Оповещение в vk.com
                         input(type="checkbox", ng-checked="userSettings.vk_notifier", ng-model="userSettings.vk_notifier", id="vk_notifier", value="1")
-        div.control-group
-            div.controls
+        div.form-group
+            div.checkbox
                 label.checkbox.control-label(for="phone_notifier")
                     span.tooltip-info.tr(tooltip-placement="right", tooltip="На Ваш номер телефона будет отправленно сообщение о выходе новой серии") Оповещение по телефону
                         input(type="checkbox", ng-checked="userSettings.phone_notifier", ng-model="userSettings.phone_notifier", id="phone_notifier", value="1")
-        div.control-group
-            div.controls
+        div.form-group
+            div.checkbox
                 button(type="submit", class="btn btn-success") Сохранить

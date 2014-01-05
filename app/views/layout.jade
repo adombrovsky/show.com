@@ -3,6 +3,7 @@ html(ng-app="showApp")
     head
         title Shows
         link(href="/css/bootstrap.css", media="all", rel="stylesheet", type="text/css")
+        link(href="/css/bootstrap_slate.css", media="all", rel="stylesheet", type="text/css")
         link(href="/css/styles.css", media="all", rel="stylesheet", type="text/css")
         link(href="/css/fancyInput.css", media="all", rel="stylesheet", type="text/css")
         link(href="/css/nprogress.css", media="all", rel="stylesheet", type="text/css")
@@ -58,8 +59,8 @@ html(ng-app="showApp")
                     div(ng-view)
         include includes/system_message_popup.jade
         div.scrollToTop.top
-            a.btn.btn-success(scroll-to-top, ng-show="showButton") Scroll to top
+            a.btn.btn-info(scroll-to-top, ng-show="showButton") Scroll to top
         div.scrollToTop
-            a.btn.btn-success(scroll-to-top, ng-show="showButton") Scroll to top
+            a.btn.btn-info(scroll-to-top, ng-show="showButton") Scroll to top
         #footer
         input#isGuest(type="hidden", value="#{isGuest}")

@@ -124,6 +124,7 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
     $scope.showAddToWatchButton = true;
     $scope.item = {};
     $scope.byEpisodeNumber = '+episode';
+    $scope.bySeasonNumber = '+season';
     if ($routeParams.id)
     {
         Show.getShowDetails($rootScope, $scope, $routeParams.id);
