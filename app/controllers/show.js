@@ -350,7 +350,7 @@ exports.list = function (req, res)
                 {
                     callback('error',[],ids);
                 }
-            },
+            }
         ],
         function(err,result,ids){
             res.json({shows:result, ids:ids});
@@ -358,42 +358,59 @@ exports.list = function (req, res)
     );
 };
 
-/*exports.popular = function (req, res)
+exports.popular = function (req, res)
 {
     async.waterfall(
         [
             function(callback)
             {
-                UserShow.find({user_id:req.user._id},function(err,ushows){
-                    var ids = [];
-                    if (err) return callback(err);
-                    for(var i=0;i<ushows.length;i++)
+                UserShow.aggregate(
                     {
-                        ids.push(ushows[i].show_id);
+                        $group:
+                        {
+
+                            _id:"$show_id",
+                            cnt:
+                            {
+                                $sum:1
+                            }
+                        }
+                    },
+                    {
+                        $sort:
+                        {
+                            cnt:-1
+                        }
+                    },
+                    {
+                        $limit:10
+                    },
+                    function(err,res)
+                    {
+                        callback(err, res);
                     }
-                    callback(err, ids);
+                );
+            },
+            function(resultShowsCount, callback)
+            {
+                var resultShowsCountLength = resultShowsCount.length;
+                var showIds = [];
+                for (var i=0; i<resultShowsCountLength;i++)
+                {
+                    showIds.push(resultShowsCount[i]['_id']);
+                }
+
+                Show.find({tvdb_id:{$in:showIds}},function(err, res){
+                    callback(err, res);
                 });
             },
-            function(ids, callback)
-            {
-                if (ids.length>0)
-                {
-                    Show.find({ tvdb_id: { $in: ids } },function(err, shows){
-                        if (err) return callback(err);
-                        callback(err, shows, ids);
-                    });
-                }
-                else
-                {
-                    callback('error',[],ids);
-                }
-            },
         ],
-        function(err,result,ids){
-            res.json({shows:result, ids:ids});
+        function(err,shows){
+            var isGuest = res.locals.isGuest;
+            res.json({shows:shows,isGuest: isGuest});
         }
     );
-};*/
+};
 
 exports.add = function (req, res)
 {

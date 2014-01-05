@@ -78,6 +78,7 @@ showControllers.controller('AjaxHandlerCtrl',["$rootScope", "$scope", '$timeout'
     $scope.title = '';
     $scope.showWindow = false;
     $rootScope.ajaxStarted = false;
+    NProgress.done();
     $scope.messageType = 'success';
 
     $scope.showMessage = function(message, messageType)
@@ -92,6 +93,7 @@ showControllers.controller('AjaxHandlerCtrl',["$rootScope", "$scope", '$timeout'
 
     $scope.$on('ajaxResponseEvent',function(event, data){
         $rootScope.ajaxStarted = false;
+        NProgress.done();
         if (data.message)
         {
             $scope.showMessage(data.message, data.success);

@@ -35,7 +35,7 @@ module.exports = function (app)
 
 
     app.get('/show/list', show.list);
-//    app.get('/show/popular', show.popular);
+    app.get('/show/popular', show.popular);
     app.get('/show/find', show.find);
     app.get('/show/trend', show.trend);
     app.get('/show/view/:id', show.view);

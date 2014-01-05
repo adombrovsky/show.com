@@ -24,6 +24,23 @@
     height: 50px;
 }
 
+
+.navbar-inner
+{
+    border-radius: 0 !important;
+}
+
+.scrollToTop.top
+{
+    top:20px;
+}
+.scrollToTop
+{
+    position: fixed;
+    left: 10px;
+    bottom: 40px;
+}
+
 /*animation*/
 .main-animation.ng-move,
 .main-animation.ng-enter,

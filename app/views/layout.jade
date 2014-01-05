@@ -4,14 +4,19 @@ html(ng-app="showApp")
         title Shows
         link(href="/css/bootstrap.css", media="all", rel="stylesheet", type="text/css")
         link(href="/css/styles.css", media="all", rel="stylesheet", type="text/css")
+        link(href="/css/fancyInput.css", media="all", rel="stylesheet", type="text/css")
+        link(href="/css/nprogress.css", media="all", rel="stylesheet", type="text/css")
         script(src="/js/jquery-1.8.2.min.js")
+        script(src="/js/fancyInput.js")
+        script(src="/js/animatescroll.js")
+        script(src="/js/nprogress.js")
         script(src="/js/angular.js")
         script(src="/js/angular-animate.js")
+        script(src="/js/angular-route.js")
         script(src="/js/controllers.js")
         script(src="/js/services.js")
         script(src="/js/filters.js")
         script(src="/js/directives.js")
-        script(src="/js/angular-route.js")
         script(src="/js/ui-bootstrap-0.7.0.js")
         script(src="/js/ui-bootstrap-tpls-0.7.0.js")
         script(src="/js/scripts.js")
@@ -44,12 +49,17 @@ html(ng-app="showApp")
 
                 .span7
                     form(ng-submit="find()",novalidate="true", ng-controller="FindCtrl")
-                        .input-append.span5
-                            input(type="text", ng-model="query", ng-required="true", ng-minlength=3, style="width:340px;")
-                            button.btn(type="submit") Search
-                        img.animate-show#loader(src="/img/257.gif", style="width:30px",ng-controller="AjaxHandlerCtrl", ng-show="ajaxStarted")
+                        .span6.effect4
+                            div.fancyinput.pull-left
+                                input(type="text", ng-model="query", ng-required="true", ng-minlength=3, style="width:340px; height:30px;")
+                            button.btn.pull-left(type="submit", style="margin: -3px 0px 0px 10px;") Search
+                        //img.animate-show#loader(src="/img/257.gif", style="width:30px",ng-controller="AjaxHandlerCtrl", ng-show="ajaxStarted")
                         div.clearfix
                     div(ng-view)
         include includes/system_message_popup.jade
+        div.scrollToTop.top
+            a.btn.btn-success(scroll-to-top, ng-show="showButton") Scroll to top
+        div.scrollToTop
+            a.btn.btn-success(scroll-to-top, ng-show="showButton") Scroll to top
         #footer
         input#isGuest(type="hidden", value="#{isGuest}")

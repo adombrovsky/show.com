@@ -1,7 +1,10 @@
 var User = require('../models/User');
 var Show = require('../models/Show');
+var UserShow = require('../models/UserShow');
 var passport = require('passport');
 var cfg = require('../config');
+var async = require('async');
+
 var config = cfg.loadConfig(cfg.appConfig);
 
 exports.index = function (req, res)
@@ -29,7 +32,7 @@ exports.contactForm = function (req, res)
         returnObject.message = 'Message successfully sent!';
         if (err) {
             returnObject.success = false;
-            returnObject.message = 'Oops. Error! You can\'t send this message! Somethis goes wrong!';
+            returnObject.message = 'Oops. Error! You can\'t send this message! Something goes wrong!';
         }
         res.json(returnObject);
     });

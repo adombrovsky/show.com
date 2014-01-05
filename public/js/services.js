@@ -9,6 +9,7 @@ showServices.factory(
             showService.showTrends = function ($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/trend/').success(function(data){
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
@@ -20,6 +21,7 @@ showServices.factory(
             showService.getShowDetails = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/view/'+showId).success(function(data){
                     $scope.item = data;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -29,6 +31,7 @@ showServices.factory(
             showService.getSeasonsList = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http
                     .get('/show/'+showId+'/seasons/')
                     .success(function(data){
@@ -42,6 +45,7 @@ showServices.factory(
             showService.getEpisodesList = function($rootScope, $scope, showId, seasonId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http
                     .get('/show/'+showId+'/season/'+seasonId+'/')
                     .success(function(data){
@@ -58,6 +62,7 @@ showServices.factory(
             showService.addShowToWatch = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/add/'+showId).success(function(data){
                     $rootScope.$broadcast('ajaxResponseEvent',data);
 
@@ -67,6 +72,7 @@ showServices.factory(
             showService.removeShowFromWatch = function($rootScope, $scope, showId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/remove/'+showId).success(function(data){
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
@@ -75,6 +81,7 @@ showServices.factory(
             showService.addEpisodeToWatch = function($rootScope, $scope, showId, seasonId, episodeId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/episode/'+episodeId+'/add').success(function(data){
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
@@ -83,6 +90,7 @@ showServices.factory(
             showService.addSeasonToWatch = function($rootScope, $scope, showId, seasonId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/add').success(function(data){
                     $scope.ids = data.ids;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -92,6 +100,7 @@ showServices.factory(
             showService.removeSeasonFromWatch = function($rootScope, $scope, showId, seasonId)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/'+showId+'/season/'+seasonId+'/remove').success(function(data){
                     $scope.ids = {};
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -101,6 +110,7 @@ showServices.factory(
             showService.findShow = function($rootScope, $scope, query)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/find?query='+query).success(function(data){
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
@@ -112,6 +122,7 @@ showServices.factory(
             showService.findShowsByUser = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/list').success(function(data){
                     $scope.shows = data.shows;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -121,6 +132,7 @@ showServices.factory(
             showService.getPopularShows = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/show/popular').success(function(data){
                     $scope.shows = data.shows;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -141,6 +153,7 @@ showServices.factory(
             userService.getUserInfo = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/user/').success(function(data){
                     $scope.user = data;
                     $scope.user.password = '';
@@ -151,6 +164,7 @@ showServices.factory(
             userService.getUserSettings = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/user/settings/').success(function(data){
                     $scope.userSettings = data;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -160,6 +174,7 @@ showServices.factory(
             userService.updateUserInfo = function($rootScope, userData)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.post('/user/save/',userData).success(function(data){
                     $rootScope.$broadcast('ajaxResponseEvent',data);
 
@@ -169,6 +184,7 @@ showServices.factory(
             userService.updateUserSettings = function($rootScope, userSettings)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.post('/user/settings/save/',userSettings).success(function(data){
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
@@ -177,6 +193,7 @@ showServices.factory(
             userService.getUserNotifications = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/notification/').success(function(data){
                     $scope.notifications = data;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -195,6 +212,7 @@ showServices.factory(
             notificationsService.getUserNotifications = function($rootScope, $scope)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 return $http.get('/notification/').success(function(data){
                     $scope.notifications = data;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -203,6 +221,7 @@ showServices.factory(
             notificationsService.markNotificationAsRead = function($rootScope, $scope, id)
             {
                 $rootScope.ajaxStarted = true;
+                NProgress.start();
                 var dataToSend = {};
                 if (id)
                 {

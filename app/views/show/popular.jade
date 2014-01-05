@@ -1,0 +1,7 @@
+ul.thumbnails
+    li.animate-items-repeat(ng-repeat="show in shows")
+        a(ng-href="#/show/view/{{show.tvdb_id}}/", class="thumbnail")
+            img(ng-src="{{show.images.poster|getPosterUrl:300}}", style="height:290px;")
+        .caption
+            a(ng-href="#/show/view/{{show.tvdb_id}}/")
+                h5 {{show.title}}
