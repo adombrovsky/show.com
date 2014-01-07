@@ -1,0 +1,3 @@
+ul.pagination(ng-controller="PaginatorCtrl", ng-init="setPaginatorData()")
+    li(ng-repeat="page in pages track by $index", class="{{checkCurrentPage($index+1)}}" )
+        a(ng-href="{{getLink($index+1)}}") {{$index+1}}

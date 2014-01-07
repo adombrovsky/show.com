@@ -5,6 +5,9 @@ showApp.config(["$routeProvider",function($routeProvider){
         .when('/show/trend',{
             templateUrl:'/views/show/trend.jade',
             controller: 'TrendCtrl'
+        }).when('/show/trend/:page',{
+            templateUrl:'/views/show/trend.jade',
+            controller: 'TrendCtrl'
         }).when('/about',{
             templateUrl:'/views/main/about.jade',
             controller: 'AboutCtrl'
@@ -18,6 +21,10 @@ showApp.config(["$routeProvider",function($routeProvider){
             controller: 'ShowDetailsCtrl'
         })
         .when('/show/list',{
+            templateUrl:'/views/show/list.jade',
+            controller: 'UserShowsCtrl'
+        })
+        .when('/show/list/:page',{
             templateUrl:'/views/show/list.jade',
             controller: 'UserShowsCtrl'
         })

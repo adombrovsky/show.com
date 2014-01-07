@@ -17,7 +17,8 @@ var ShowSchema = mongoose.Schema({
     last_updated    : Number,
     images          : mongoose.Schema.Types.Mixed,
     ratings         : mongoose.Schema.Types.Mixed,
-    genres          : []
+    genres          : [],
+    trend           : Number
 });
 
 ShowSchema.methods = {

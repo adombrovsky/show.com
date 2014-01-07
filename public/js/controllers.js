@@ -1,11 +1,13 @@
 var showControllers = angular.module('showControllers',[]);
 
-showControllers.controller('TrendCtrl',["$rootScope","$scope","Show",function($rootScope, $scope, Show){
+showControllers.controller('TrendCtrl',["$rootScope", "$scope", "$routeParams", "Show",function($rootScope, $scope, $routeParams, Show){
     $scope.isGuest = true;
-    Show.showTrends($rootScope, $scope);
+    $scope.link = '#/show/trend/:page';
+    $scope.currentPage = $routeParams.page || 1;
+    Show.showTrends($rootScope, $scope, $routeParams.page);
 }]);
 
-showControllers.controller('MainCtrl',["$rootScope", "$scope","Notifications",function($rootScope, $scope, Notifications){
+showControllers.controller('MainCtrl',["$rootScope", "$scope", "Notifications",function($rootScope, $scope, Notifications){
 }]);
 
 showControllers.controller('AboutCtrl',["$rootScope", "$scope", "$http",function($rootScope, $scope, $http){
@@ -24,12 +26,14 @@ showControllers.controller('IndexCtrl',["$rootScope", "$scope", "Show",function(
     Show.getPopularShows($rootScope, $scope);
 }]);
 
-showControllers.controller('UserShowsCtrl',["$rootScope","$location", "$scope","Show",function($rootScope, $location, $scope, Show){
+showControllers.controller('UserShowsCtrl',["$rootScope", "$location", "$scope", "$routeParams", "Show",function($rootScope, $location, $scope, $routeParams, Show){
     $scope.showAddToWatchButton = false;
-    Show.findShowsByUser($rootScope, $scope);
+    $scope.link = '#/show/list/:page';
+    $scope.currentPage = $routeParams.page || 1;
+    Show.findShowsByUser($rootScope, $scope, $routeParams.page);
 }]);
 
-showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notifications", "$sce", "$route", "$location",function($rootScope, $scope, Notifications, $sce, $route, $location){
+showControllers.controller('NotificationCtrl',["$rootScope", "$scope", "Notifications", "$sce", "$route", "$location",function($rootScope, $scope, Notifications, $sce, $route, $location){
     $scope.notifications = {};
     $scope.notificationCount = -1;
     if ($location.path() === '/notification')
@@ -63,7 +67,7 @@ showControllers.controller('NotificationCtrl',["$rootScope", "$scope","Notificat
     };
 }]);
 
-showControllers.controller('ModalCtrl',["$rootScope", "$scope","$modal",function($rootScope, $scope, $modal){
+showControllers.controller('ModalCtrl',["$rootScope", "$scope", "$modal",function($rootScope, $scope, $modal){
     $scope.open = function()
     {
         $scope.$modalInstance = $modal.open({
@@ -193,7 +197,7 @@ showControllers.controller('ShowDetailsCtrl',["$rootScope", "$scope", "$routePar
     };
 }]);
 
-showControllers.controller('FindCtrl',["$rootScope", "$scope","$location","$routeParams","$rootScope",'Show',function($rootScope, $scope, $location, $routeParams, $rootScope, Show){
+showControllers.controller('FindCtrl',["$rootScope", "$scope", "$location", "$routeParams", "$rootScope", 'Show',function($rootScope, $scope, $location, $routeParams, $rootScope, Show){
     $scope.query = '';
     $scope.isGuest = true;
     $scope.find = function()
@@ -224,5 +228,24 @@ showControllers.controller('UserSettingsCtrl',["$rootScope", "$scope", "User",fu
     $scope.saveUserSettings = function()
     {
         User.updateUserSettings($rootScope, $scope.userSettings);
+    }
+}]);
+
+showControllers.controller('PaginatorCtrl',["$scope",function($scope){
+
+    $scope.setPaginatorData = function()
+    {
+        $scope.pages = new Array($scope.pagesCount);
+        $scope.link = $scope.link;
+    };
+
+    $scope.getLink = function(pageNumber)
+    {
+        return $scope.link.replace(':page',pageNumber);
+    };
+
+    $scope.checkCurrentPage = function(currentPage)
+    {
+        return currentPage == $scope.currentPage ? 'active':'';
     }
 }]);

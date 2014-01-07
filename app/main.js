@@ -115,9 +115,9 @@ app.use(express.static(__dirname + '/../public'));
 app.use(express.cookieParser());
 app.use(express.session({
     cookie: {
-        maxAge: new Date(Date.now() + 3600000)
+        maxAge: 10*24*60*60*1000
     },
-    secret: 'thisismysecret',
+    secret: 'jimmyeattheworld',
     store: new mongoStore({
         url: mongoUri
     })

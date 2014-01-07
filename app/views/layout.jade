@@ -22,19 +22,23 @@ html(ng-app="showApp")
         script(src="/js/ui-bootstrap-tpls-0.7.0.js")
         script(src="/js/scripts.js")
     body
-        .navbar.inverse.navbar-inverse
-            .navbar-inner
-                a.brand(href='/') Shows
-                a.brand(href='#/about/') About
-                if (isGuest)
-                    a.brand.login-form(ng-href='/login/google/') Login via Google
-                else
-                    a.brand(href='/logout/') Logout
+        .navbar.navbar-default
+            .navbar-header
+                a.navbar-brand(href='/') Shows
+            .navbar-collapse.collapse.navbar-responsive-collapse
+                ul.nav.navbar-nav
+                    li
+                        a(href='#/about/') About
+                    li
+                        if (isGuest)
+                            a.login-form(ng-href='/login/google/') Login via Google
+                        else
+                            a(href='/logout/') Logout
 
         .container-fluid
             .row-fluid
                 .span2
-                    ul.nav.nav-tabs.nav-stacked
+                    ul.nav.nav-pills.nav-stacked
                         li
                             a(href="{{'#/show/trend/'}}") Trending Shows
                         if (!isGuest)

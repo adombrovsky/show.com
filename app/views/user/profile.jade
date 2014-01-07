@@ -1,6 +1,6 @@
+h2 User Information
 form(class="form-horizontal ajax", ng-controller="UserProfileCtrl", ng-submit="saveUserInfo()")
     fieldset
-        legend Название формы
         div.form-group
             label.control-label(for="name") Имя
             div.col-lg-5
@@ -9,10 +9,6 @@ form(class="form-horizontal ajax", ng-controller="UserProfileCtrl", ng-submit="s
             label.control-label(for="email") E-mail
             div.col-lg-5
                 input.form-control(type="text", name="email", id="email", autocomplete="off",placeholder="Введите свой E-mail", ng-model="user.email")
-        div.form-group
-            label.control-label(for="password") Новый пароль
-            div.col-lg-5
-                input.form-control(type="password", name="password", id="password", ng-model="user.password")
         div.form-group
             div.col-lg-5
                 button(type="submit", class="btn btn-success") Сохранить

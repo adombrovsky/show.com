@@ -6,14 +6,15 @@ showServices.factory(
         '$http',
         function($http){
             var showService = {};
-            showService.showTrends = function ($rootScope, $scope)
+            showService.showTrends = function ($rootScope, $scope, pageNumber)
             {
                 $rootScope.ajaxStarted = true;
                 NProgress.start();
-                return $http.get('/show/trend/').success(function(data){
+                return $http.get('/show/trend/'+(pageNumber || 1)).success(function(data){
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
                     $scope.isGuest = data.isGuest;
+                    $scope.pagesCount = data.pagesCount;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
@@ -119,12 +120,13 @@ showServices.factory(
                 });
             };
 
-            showService.findShowsByUser = function($rootScope, $scope)
+            showService.findShowsByUser = function($rootScope, $scope, pageNumber)
             {
                 $rootScope.ajaxStarted = true;
                 NProgress.start();
-                return $http.get('/show/list').success(function(data){
+                return $http.get('/show/list/'+(pageNumber || 1)).success(function(data){
                     $scope.shows = data.shows;
+                    $scope.pagesCount = data.pagesCount;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };

@@ -1,2 +1,8 @@
+h2 Trending Shows
 ul.thumbnails(ng-controller="TrendCtrl")
+    div(ng-if="pagesCount")
+        include ../includes/pagination.jade
     include ../includes/show_item.jade
+    div.clearfix
+    div(ng-if="pagesCount")
+        include ../includes/pagination.jade

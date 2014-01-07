@@ -34,10 +34,13 @@ module.exports = function (app)
     app.get('/login/google/callback',passport.authenticate('google',{ failureRedirect: '/' }),main.loginGoogle);
 
 
+//    app.get('/show/test', show.updateTrendShows);
     app.get('/show/list', show.list);
+    app.get('/show/list/:page', show.list);
     app.get('/show/popular', show.popular);
     app.get('/show/find', show.find);
     app.get('/show/trend', show.trend);
+    app.get('/show/trend/:page', show.trend);
     app.get('/show/view/:id', show.view);
     app.get('/show/:id/seasons', show.seasons);
     app.get('/show/:id/season/:season', show.episodes);

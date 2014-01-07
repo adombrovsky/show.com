@@ -1,5 +1,4 @@
 var api=require('../library/trakt.js');
-var vkApi=require('../library/vk.js');
 var User = require('../models/User');
 var Show = require('../models/Show');
 var Season = require('../models/Season');
@@ -22,21 +21,21 @@ exports.find = function (req, res)
         };
         api.sendRequest(searchOptions,function (err, response, body){
             var isGuest = res.locals.isGuest;
+            var ids = {};
             if (req.user)
             {
                 UserShow.find({user_id:req.user._id},function(err,ushows){
-                    var ids = [];
-                    if (err) return callback(err);
+                    if (err) return false;
                     for(var i=0;i<ushows.length;i++)
                     {
                         ids[ushows[i].show_id] = true;
                     }
-                    res.json({body:body.splice(0,200), ids:ids, isGuest:isGuest});
+                    res.json({body:body, ids:ids, isGuest:isGuest});
                 });
             }
             else
             {
-                res.json({body:body.splice(0,200),ids:[], isGuest: isGuest});
+                res.json({body:body,ids:ids, isGuest: isGuest});
             }
         });
     }
@@ -48,32 +47,51 @@ exports.find = function (req, res)
 
 exports.trend = function (req, res)
 {
-    api.sendRequest(
-        {
-            url: '/shows/trending.json/',
-            queryParams: {}
-        },
-        function (err, response, body)
-        {
-            if (!res.locals.isGuest)
+    var page = req.params.page - 1;
+    var itemPerPage = 52;
+    var skip = page * itemPerPage;
+    async.parallel(
+        [
+            function(callback)
             {
-                UserShow.find({user_id:req.user._id},function(err,ushows){
-                    var ids = [];
-                    if (err) return callback(err);
-                    for(var i=0;i<ushows.length;i++)
-                    {
-                        ids[ushows[i].show_id] = true;
-                    }
-                    res.json({body:body.splice(0,200), ids:ids, isGuest:res.locals.isGuest});
+                var ids = {};
+                if (!res.locals.isGuest)
+                {
+                    UserShow.find({user_id:req.user._id},function(err,ushows){
+                        if (err) callback(err);
+                        for(var i=0;i<ushows.length;i++)
+                        {
+                            ids[ushows[i].show_id] = true;
+                        }
+                        callback(err, {ids:ids});
+                    });
+                }
+                else
+                {
+                    callback(null, {ids:ids});
+                }
+            },
+            function(callback)
+            {
+                Show.find({trend:1},null,{limit:itemPerPage, skip:skip},function(err, records){
+                    if (err) callback(err);
+                    callback(err, {shows:records});
+                });
+            },
+            function(callback)
+            {
+                Show.count({trend:1},function(err, count){
+                    if (err) callback(err);
+                    callback(err, {count:count});
                 });
             }
-            else
-            {
-                res.json({body:body.splice(0,200),ids:[], isGuest:res.locals.isGuest});
-            }
+        ],
+        function(err,result)
+        {
+            var pagesCount = Math.ceil(result[2].count/itemPerPage);
+            res.json({body:result[1].shows,ids:result[0].ids,pagesCount:pagesCount, isGuest:res.locals.isGuest});
         }
     );
-
 };
 exports.view = function (req, res)
 {
@@ -111,12 +129,12 @@ exports.view = function (req, res)
             function(callback){
                 UserShow.findOne({user_id:req.user? req.user._id:0,show_id:id},function(err, record){
                     if (err) return callback(err);
-                    callback(err, {isGuest:res.locals.isGuest, watchedByUser:record ? true: false});
+                    callback(err, {watchedByUser:record ? true: false});
                 });
             },
         ],
         function(err, result){
-            res.json({show:result[0].show,seasonsCount:result[0].seasonsCount,isGuest:result[1].isGuest,watchedByUser:result[1].watchedByUser});
+            res.json({show:result[0].show,seasonsCount:result[0].seasonsCount,isGuest:res.locals.isGuest,watchedByUser:result[1].watchedByUser});
         }
     );
 };
@@ -305,31 +323,20 @@ exports.removeSeason = function (req, res)
 
 exports.list = function (req, res)
 {
-    /*vkApi.login(
-        {
-            url:'/token',
-            queryParams:
-            {
-                grant_type:'password',
-                username:'dombrovsky.alex@gmail.com',
-                password:'rxudaepa',
-                scope:1,
-                v:5.5
-            }
-        }
-    );*/
     if (req.isUnauthenticated() || typeof req.user == 'undefined')
     {
         res.redirect('/');
     }
-
+    var page = req.params.page - 1;
+    var itemPerPage = 20;
+    var skip = page * itemPerPage;
     async.waterfall(
         [
             function(callback)
             {
                 UserShow.find({user_id:req.user._id},function(err,ushows){
-                    var ids = [];
-                    if (err) return callback(err);
+                    var ids = {};
+                    if (err) callback(err);
                     for(var i=0;i<ushows.length;i++)
                     {
                         ids[ushows[i].show_id] = true;
@@ -339,11 +346,13 @@ exports.list = function (req, res)
             },
             function(ids, callback)
             {
-                if (ids.length>0)
+                if (Object.keys(ids).length>0)
                 {
-                    Show.find({ tvdb_id: { $in: Object.keys(ids) } },function(err, shows){
-                        if (err) return callback(err);
-                        callback(err, shows, ids);
+                    Show.count({ tvdb_id: { $in: Object.keys(ids) } },function(err, count){
+                        if (err) callback(err);
+                        Show.find({ tvdb_id: { $in: Object.keys(ids) } },null,{limit:itemPerPage, skip:skip},function(err, shows){
+                            callback(err, ids, count, shows);
+                        });
                     });
                 }
                 else
@@ -352,8 +361,9 @@ exports.list = function (req, res)
                 }
             }
         ],
-        function(err,result,ids){
-            res.json({shows:result, ids:ids});
+        function(err, ids, count, shows){
+            var pagesCount = Math.ceil(count/itemPerPage);
+            res.json({shows:shows, ids:ids,pagesCount:pagesCount});
         }
     );
 };
@@ -596,6 +606,26 @@ exports.checkNewEpisodes = function(req, res)
                     }
                 }
             }
+        }
+    );
+};
+
+exports.updateTrendShows = function(req, res)
+{
+    api.sendRequest(
+        {
+            url: '/shows/trending.json/',
+            queryParams: {}
+        },
+        function (err, response, body)
+        {
+            var l = body.length;
+            for(var i=0; i<l;i++)
+            {
+                body[i].trend = 1;
+                Show.findOneAndUpdate({tvdb_id:body[i].tvdb_id},body[i],{upsert:true},function(err, show){});
+            }
+            res.json({status:'ok'});
         }
     );
 };
