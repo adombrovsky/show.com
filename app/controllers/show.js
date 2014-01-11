@@ -73,7 +73,7 @@ exports.trend = function (req, res)
             },
             function(callback)
             {
-                Show.find({trend:1},null,{limit:itemPerPage, skip:skip},function(err, records){
+                Show.find({trend:1},null,{limit:itemPerPage, skip:skip, sort:{trend_order:1}},function(err, records){
                     if (err) callback(err);
                     callback(err, {shows:records});
                 });
@@ -619,13 +619,19 @@ exports.updateTrendShows = function(req, res)
         },
         function (err, response, body)
         {
-            var l = body.length;
-            for(var i=0; i<l;i++)
-            {
-                body[i].trend = 1;
-                Show.findOneAndUpdate({tvdb_id:body[i].tvdb_id},body[i],{upsert:true},function(err, show){});
-            }
-            res.json({status:'ok'});
+            Show.update(null, {$set: { trend: 0, trend_order:0}}, {multi:true}, function(updateErr, numberAffected) {
+                var data = {status:'ok'};
+                if (updateErr) data.status = 'bad';
+                var l = body.length;
+                for(var i=0; i<l;i++)
+                {
+                    body[i].trend = 1;
+                    body[i].trend_order = i;
+                    Show.findOneAndUpdate({tvdb_id:body[i].tvdb_id},body[i],{upsert:true},function(err, show){});
+                }
+                data.numberAffected = numberAffected;
+                console.log(data);
+            });
         }
     );
 };

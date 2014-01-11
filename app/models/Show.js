@@ -18,7 +18,8 @@ var ShowSchema = mongoose.Schema({
     images          : mongoose.Schema.Types.Mixed,
     ratings         : mongoose.Schema.Types.Mixed,
     genres          : [],
-    trend           : Number
+    trend           : Number,
+    trend_order     : Number
 });
 
 ShowSchema.methods = {
