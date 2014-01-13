@@ -56,6 +56,7 @@ module.exports = function (app)
     app.post('/user/settings/save',user.updateSettings);
 
     app.get('/notification/',notification.index);
+    app.get('/notification/:page',notification.index);
     app.post('/notification/count',notification.getUserNotifications);
     app.post('/notification/markAsRead',notification.setAsRead);
 };

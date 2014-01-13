@@ -1,15 +1,49 @@
 var User = require('../models/User');
 var UserNotification = require('../models/UserNotification');
+var async = require('async');
 
 exports.index = function (req, res)
 {
-    UserNotification.find({user_id:req.user._id, unread:1},null,{limit:200, sort:{date:-1}},function(err, records){
+    var page = req.params.page - 1;
+    var itemPerPage = 15;
+    var skip = page * itemPerPage;
+
+    async.parallel(
+        [
+            function(callback)
+            {
+                UserNotification.find({user_id:req.user._id, unread:1},null,{limit:itemPerPage, skip:skip, sort:{date:-1}},function(err, records){
+                    if (err) callback(err);
+                    callback(err, {shows:records});
+                });
+            },
+            function(callback)
+            {
+                UserNotification.count({user_id:req.user._id, unread:1},function(err, count){
+                    if (err) callback(err);
+                    callback(err, {count:count});
+                });
+            }
+        ],
+        function(err,result)
+        {
+            var pagesCount = Math.ceil(result[1].count/itemPerPage);
+            res.json({records:result[0].shows,pagesCount:pagesCount});
+        }
+    );
+
+
+
+   /* UserNotification.find({user_id:req.user._id, unread:1},null,{limit:itemPerPage, skip:skip, sort:{date:-1}},function(err, records){
         if (err)
         {
 
         }
-        res.json(records);
-    });
+        var pagesCount = Math.ceil(records.length/itemPerPage);
+        console.log(records.length);
+        console.log(itemPerPage);
+        res.json({records:records,pagesCount:pagesCount});
+    });*/
 };
 
 exports.getUserNotifications = function (req, res)

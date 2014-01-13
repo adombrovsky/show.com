@@ -10,7 +10,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 NProgress.start();
-                return $http.get('/show/trend/'+(pageNumber || 1)).success(function(data){
+                return $http.get('/show/trend/'+pageNumber).success(function(data){
                     $scope.shows = data.body;
                     $scope.ids = data.ids;
                     $scope.isGuest = data.isGuest;
@@ -124,7 +124,7 @@ showServices.factory(
             {
                 $rootScope.ajaxStarted = true;
                 NProgress.start();
-                return $http.get('/show/list/'+(pageNumber || 1)).success(function(data){
+                return $http.get('/show/list/'+pageNumber).success(function(data){
                     $scope.shows = data.shows;
                     $scope.pagesCount = data.pagesCount;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
@@ -191,16 +191,6 @@ showServices.factory(
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };
-
-            userService.getUserNotifications = function($rootScope, $scope)
-            {
-                $rootScope.ajaxStarted = true;
-                NProgress.start();
-                return $http.get('/notification/').success(function(data){
-                    $scope.notifications = data;
-                    $rootScope.$broadcast('ajaxResponseEvent',data);
-                });
-            };
             return userService;
         }
     ]
@@ -211,12 +201,13 @@ showServices.factory(
         '$http',
         function($http){
             var notificationsService = {};
-            notificationsService.getUserNotifications = function($rootScope, $scope)
+            notificationsService.getUserNotifications = function($rootScope, $scope, pageNumber)
             {
                 $rootScope.ajaxStarted = true;
                 NProgress.start();
-                return $http.get('/notification/').success(function(data){
-                    $scope.notifications = data;
+                return $http.get('/notification/'+pageNumber).success(function(data){
+                    $scope.notifications = data.records;
+                    $scope.pagesCount = data.pagesCount;
                     $rootScope.$broadcast('ajaxResponseEvent',data);
                 });
             };

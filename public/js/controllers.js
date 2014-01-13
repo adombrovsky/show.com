@@ -4,7 +4,7 @@ showControllers.controller('TrendCtrl',["$rootScope", "$scope", "$routeParams", 
     $scope.isGuest = true;
     $scope.link = '#/show/trend/:page';
     $scope.currentPage = $routeParams.page || 1;
-    Show.showTrends($rootScope, $scope, $routeParams.page);
+    Show.showTrends($rootScope, $scope, $scope.currentPage);
 }]);
 
 showControllers.controller('MainCtrl',["$rootScope", "$scope", "Notifications",function($rootScope, $scope, Notifications){
@@ -30,15 +30,18 @@ showControllers.controller('UserShowsCtrl',["$rootScope", "$location", "$scope",
     $scope.showAddToWatchButton = false;
     $scope.link = '#/show/list/:page';
     $scope.currentPage = $routeParams.page || 1;
-    Show.findShowsByUser($rootScope, $scope, $routeParams.page);
+    Show.findShowsByUser($rootScope, $scope, $scope.currentPage);
 }]);
 
-showControllers.controller('NotificationCtrl',["$rootScope", "$scope", "Notifications", "$sce", "$route", "$location",function($rootScope, $scope, Notifications, $sce, $route, $location){
+showControllers.controller('NotificationCtrl',["$rootScope", "$scope", "Notifications", "$sce", "$route", "$location", "$routeParams",function($rootScope, $scope, Notifications, $sce, $route, $location, $routeParams){
     $scope.notifications = {};
     $scope.notificationCount = -1;
-    if ($location.path() === '/notification')
+    $scope.link = '#/notification/:page';
+    $scope.currentPage = $routeParams.page || 1;
+    if ($location.path() === '/notification' || $location.path() === '/notification/'+$scope.currentPage)
     {
-        Notifications.getUserNotifications($rootScope, $scope);
+        console.log($scope.currentPage);
+        Notifications.getUserNotifications($rootScope, $scope, $scope.currentPage);
     }
     $scope.hideMarkedNotification = false;
 

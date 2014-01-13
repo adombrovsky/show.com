@@ -36,6 +36,10 @@ showApp.config(["$routeProvider",function($routeProvider){
             templateUrl:'/views/notification/index.jade',
             controller: 'NotificationCtrl'
         })
+        .when('/notification/:page',{
+            templateUrl:'/views/notification/index.jade',
+            controller: 'NotificationCtrl'
+        })
         .when('/user/settings',{
             templateUrl:'/views/user/settings.jade',
             controller: 'UserSettingsCtrl'
